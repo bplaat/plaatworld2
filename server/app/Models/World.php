@@ -35,6 +35,13 @@ class World extends Model
         'active' => 'boolean'
     ];
 
+    // A world belongs to many objects
+    public function objects()
+    {
+        return $this->belongsToMany(GameObject::class, 'world_object', 'world_id', 'object_id')
+            ->withPivot('name', 'position_x', 'position_y', 'position_z', 'rotation_x', 'rotation_y', 'rotation_z')->withTimestamps();
+    }
+
     // Search by a query
     public static function search($query, $searchQuery)
     {

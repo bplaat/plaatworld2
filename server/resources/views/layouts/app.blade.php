@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="has-navbar-fixed-top">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" @class(['has-navbar-fixed-top' => true, 'is-immersive' => isset($immersive) && $immersive])>
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -17,16 +17,22 @@
 <body>
     @include('layouts.navbar')
 
+    @if (!isset($immersive) || !$immersive)
     <div class="section">
+    @endif
         {{ $slot }}
+    @if (!isset($immersive) || !$immersive)
     </div>
+    @endif
 
-    <div class="footer">
-        <div class="content has-text-centered">
-            <p>@lang('layout.footer.authors')</p>
-            <p><span class="tag mr-1">v{{ config('app.version') }}</span> @lang('layout.footer.source')</p>
+    @if (!isset($immersive) || !$immersive)
+        <div class="footer">
+            <div class="content has-text-centered">
+                <p>@lang('layout.footer.authors')</p>
+                <p><span class="tag mr-1">v{{ config('app.version') }}</span> @lang('layout.footer.source')</p>
+            </div>
         </div>
-    </div>
+    @endif
 
     <script src="/js/script.js?v={{ config('app.version') }}"></script>
     @livewireScripts

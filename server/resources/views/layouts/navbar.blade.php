@@ -2,11 +2,11 @@
     $isLight = Auth::check() && Auth::user()->theme == App\Models\User::THEME_LIGHT;
 @endphp
 <div class="navbar is-light is-fixed-top">
+    @if (!isset($immersive) || !$immersive)
     <div class="container">
+    @endif
         <div class="navbar-brand">
-            <a @class(['navbar-item', 'is-active' => Route::currentRouteName() == 'home', 'has-text-weight-bold']) href="{{ route('home') }}">
-                PlaatWorld II
-            </a>
+            <a @class(['navbar-item', 'is-active' => Route::currentRouteName() == 'home', 'has-text-weight-bold']) href="{{ route('home') }}">PlaatWorld II</a>
             <a class="navbar-burger burger"><span></span><span></span><span></span></a>
         </div>
         <div class="navbar-menu">
@@ -50,5 +50,7 @@
                 </div>
             @endauth
         </div>
+    @if (!isset($immersive) || !$immersive)
     </div>
+    @endif
 </div>

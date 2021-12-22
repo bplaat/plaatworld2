@@ -11,10 +11,11 @@ class Crud extends PaginationComponent
     public $isCreating;
 
     public $rules = [
-        'object.type' => 'required|integer|in:' . GameObject::TYPE_SPRITE,
+        'object.type' => 'required|integer|digits_between:' . GameObject::TYPE_SPRITE . ',' . GameObject::TYPE_CUBE,
         'object.name' => 'required|min:2|max:48',
         'object.width' => 'required|numeric|min:0.001',
         'object.height' => 'required|numeric|min:0.001',
+        'object.depth' => 'required|numeric|min:0',
         'object.texture_id' => 'nullable|integer|exists:textures,id'
     ];
 

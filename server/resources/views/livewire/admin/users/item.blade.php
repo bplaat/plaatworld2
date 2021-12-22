@@ -152,12 +152,12 @@
 
                         <div class="column">
                             <div class="field">
-                                <label class="label" for="theme">@lang('admin/users.crud.theme')</label>
+                                <label class="label" for="theme">@lang('admin/users.item.theme')</label>
                                 <div class="control">
                                     <div class="select is-fullwidth @error('user.theme') is-danger @enderror">
                                         <select id="theme" wire:model.defer="user.theme">
-                                            <option value="{{ App\Models\User::THEME_LIGHT }}">@lang('admin/users.crud.theme_light')</option>
-                                            <option value="{{ App\Models\User::THEME_DARK }}">@lang('admin/users.crud.theme_dark')</option>
+                                            <option value="{{ App\Models\User::THEME_LIGHT }}">@lang('admin/users.item.theme_light')</option>
+                                            <option value="{{ App\Models\User::THEME_DARK }}">@lang('admin/users.item.theme_dark')</option>
                                         </select>
                                     </div>
                                 </div>

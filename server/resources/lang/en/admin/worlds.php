@@ -22,8 +22,12 @@ return [
     'crud.spawn_rotation_z' => 'Spawn rotation Z',
     'crud.cancel' => 'Cancel',
 
+    // Admin worlds editor livewire component
+    'editor.title' => 'Editor - :world.name - Worlds - Admin',
+
     // Admin worlds item livewire component
     'item.inactive' => 'Inactive',
+    'item.editor' => 'Editor',
     'item.edit' => 'Edit',
     'item.delete' => 'Delete',
     'item.edit_world' => 'Edit world',

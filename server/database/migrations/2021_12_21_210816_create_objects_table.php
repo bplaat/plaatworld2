@@ -19,7 +19,7 @@ class CreateObjectsTable extends Migration
             $table->string('name');
             $table->double('width');
             $table->double('height');
-            // $table->double('depth');
+            $table->double('depth');
             $table->unsignedBigInteger('texture_id')->nullable();
             // $table->text('data');
             $table->boolean('active');

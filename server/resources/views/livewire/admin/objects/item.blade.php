@@ -37,6 +37,7 @@
                             <div class="select is-fullwidth @error('object.type') is-danger @enderror">
                                 <select id="type" wire:model.defer="object.type">
                                     <option value="{{ App\Models\GameObject::TYPE_SPRITE }}">@lang('admin/objects.item.type_sprite')</option>
+                                    <option value="{{ App\Models\GameObject::TYPE_CUBE }}">@lang('admin/objects.item.type_cube')</option>
                                 </select>
                             </div>
                         </div>
@@ -72,6 +73,17 @@
                                         wire:model.defer="object.height" required>
                                 </div>
                                 @error('object.height') <p class="help is-danger">{{ $message }}</p> @enderror
+                            </div>
+                        </div>
+
+                        <div class="column">
+                            <div class="field">
+                                <label class="label" for="depth">@lang('admin/objects.item.depth')</label>
+                                <div class="control">
+                                    <input class="input @error('object.depth') is-danger @enderror" type="number" step="0.001" id="depth"
+                                        wire:model.defer="object.depth" required>
+                                </div>
+                                @error('object.depth') <p class="help is-danger">{{ $message }}</p> @enderror
                             </div>
                         </div>
                     </div>

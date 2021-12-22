@@ -16,9 +16,7 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => Hash::make($this->faker->password),
             'role' => User::ROLE_NORMAL,
-            'language' => User::LANGUAGE_ENGLISH,
-            'theme' => $this->faker->randomElement([User::THEME_LIGHT, User::THEME_DARK]),
-            'active' => true
+            'theme' => $this->faker->randomElement([User::THEME_LIGHT, User::THEME_DARK])
         ];
     }
 

@@ -13,9 +13,11 @@ return [
     'crud.empty' => 'No objects found!',
     'crud.type' => 'Type',
     'crud.type_sprite' => 'Sprite',
+    'crud.type_cube' => 'Cube',
     'crud.name' => 'Name',
     'crud.width' => 'Width',
     'crud.height' => 'Height',
+    'crud.depth' => 'Depth',
     'crud.cancel' => 'Cancel',
 
     // Admin objects item livewire component
@@ -25,9 +27,11 @@ return [
     'item.edit_object' => 'Edit object',
     'item.type' => 'Type',
     'item.type_sprite' => 'Sprite',
+    'item.type_cube' => 'Cube',
     'item.name' => 'Name',
     'item.width' => 'Width',
     'item.height' => 'Height',
+    'item.depth' => 'Depth',
     'item.active' => 'Active',
     'item.active_object' => 'Make object visible in the system',
     'item.cancel' => 'Cancel',

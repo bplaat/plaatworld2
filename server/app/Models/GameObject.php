@@ -11,8 +11,9 @@ class GameObject extends Model
 
     protected $table = 'objects';
 
-    // A object can be a sprite
+    // A object can be a sprite or an cube
     public const TYPE_SPRITE = 0;
+    public const TYPE_CUBE = 1;
 
     // Fields
     protected $attributes = [
@@ -20,12 +21,14 @@ class GameObject extends Model
         'name' => 'Untitled object',
         'width' => 1,
         'height' => 1,
+        'depth' => 0,
         'active' => true
     ];
 
     protected $casts = [
         'width' => 'double',
         'height' => 'double',
+        'depth' => 'double',
         'active' => 'boolean'
     ];
 
@@ -33,6 +36,13 @@ class GameObject extends Model
     public function texture()
     {
         return $this->belongsTo(Texture::class);
+    }
+
+    // A object belongs to many worlds
+    public function worlds()
+    {
+        return $this->belongsToMany(GameObject::class, 'world_object', 'object_id', 'world_id')
+            ->withPivot('name', 'position_x', 'position_y', 'position_z', 'rotation_x', 'rotation_y', 'rotation_z')->withTimestamps();
     }
 
     // Search by a query

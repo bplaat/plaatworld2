@@ -1,3 +1,5 @@
+.is-immersive{overflow:hidden}
+
 .column>.box:not(.not-fullheight){height:100%}
 .column>.card{display:flex;flex-direction:column;height:100%;margin-bottom:0;overflow:hidden}
 .column>.card>.card-content{flex:1;margin-bottom:0}
