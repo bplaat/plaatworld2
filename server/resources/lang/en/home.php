@@ -3,5 +3,5 @@
 return [
     // Home page
     'title' => 'Home',
-    'description' => 'Please go away I want to die...'
+    'description' => 'Why do I wasted my time on bullshit like this project...'
 ];
