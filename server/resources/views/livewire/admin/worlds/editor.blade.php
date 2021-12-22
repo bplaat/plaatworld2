@@ -35,7 +35,6 @@
     </div>
 
 <script src="/js/vue.min.js"></script>
-<script src="/js/three.min.js"></script>
 <script src="/js/stats.min.js"></script>
 <script src="/js/OrbitControls.min.js"></script>
 <script>
@@ -109,7 +108,7 @@ groundMaterial.map.wrapS = THREE.RepeatWrapping;
 groundMaterial.map.wrapT = THREE.RepeatWrapping;
 const ground = new THREE.Mesh(groundGeometry, groundMaterial);
 ground.rotation.x = -Math.PI / 2;
-ground.position.y = -0.01;
+    ground.position.y = -0.001;
 grounds.add(ground);
 
 // Sprite objects group
@@ -199,11 +198,11 @@ const editor = new Vue({
                 if (key == 'c') {
                     this.addObject(this.selectedWorldObject.object);
                 }
-                if (key == 'q') {
+                if (key == 'q' && this.selectedWorldObject.object.type == data.OBJECT_TYPE_CUBE) {
                     this.selectedWorldObject.rotation.y -= 0.05;
                     this.selectedWorldObject.mesh.rotation.y = this.selectedWorldObject.rotation.y;
                 }
-                if (key == 'e') {
+                if (key == 'e' && this.selectedWorldObject.object.type == data.OBJECT_TYPE_CUBE) {
                     this.selectedWorldObject.rotation.y += 0.05;
                     this.selectedWorldObject.mesh.rotation.y = this.selectedWorldObject.rotation.y;
                 }
@@ -217,7 +216,7 @@ const editor = new Vue({
                 worldObject.mesh = new THREE.Mesh(spriteGeomery, objectMaterials[worldObject.object.id]);
                 worldObject.mesh.scale.x = worldObject.object.width;
                 worldObject.mesh.scale.y = worldObject.object.height;
-                worldObject.mesh.position.set(worldObject.position.x, worldObject.position.y, worldObject.position.z);
+                worldObject.mesh.position.set(worldObject.position.x, worldObject.position.y + worldObject.object.height / 2, worldObject.position.z);
                 sprites.add(worldObject.mesh);
             }
             if (worldObject.object.type == data.OBJECT_TYPE_CUBE) {
@@ -225,7 +224,7 @@ const editor = new Vue({
                 worldObject.mesh.scale.x = worldObject.object.width;
                 worldObject.mesh.scale.y = worldObject.object.height;
                 worldObject.mesh.scale.z = worldObject.object.depth;
-                worldObject.mesh.position.set(worldObject.position.x, worldObject.position.y, worldObject.position.z);
+                worldObject.mesh.position.set(worldObject.position.x, worldObject.position.y + worldObject.object.height / 2, worldObject.position.z);
                 worldObject.mesh.rotation.set(worldObject.rotation.x, worldObject.rotation.y, worldObject.rotation.z);
                 cubes.add(worldObject.mesh);
             }
@@ -237,7 +236,7 @@ const editor = new Vue({
                 object_id: object.id,
                 object,
                 name: object.name + ' #' + Date.now(),
-                position: { x: selectedWorldObject.position.x, y: object.height / 2, z: selectedWorldObject.position.z },
+                position: { x: selectedWorldObject.position.x, y: 0, z: selectedWorldObject.position.z },
                 rotation: { x: 0, y: 0, z: 0 }
             };
             this.selectedWorldObject = worldObject;

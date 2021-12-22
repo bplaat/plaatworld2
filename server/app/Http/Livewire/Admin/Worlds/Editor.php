@@ -45,6 +45,6 @@ class Editor extends Component
                     'z' => $worldObject->pivot->rotation_z
                 ]]
             )
-        ])->layout('layouts.app', ['title' => __('admin/worlds.editor.title', ['world.name' => $this->world->name]), 'immersive' => true]);
+        ])->layout('layouts.app', ['title' => __('admin/worlds.editor.title', ['world.name' => $this->world->name]), 'immersive' => true, 'threejs' => true]);
     }
 }

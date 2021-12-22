@@ -13,6 +13,9 @@
     @endif
     <link rel="stylesheet" href="/css/style.css?v={{ config('app.version') }}">
     @livewireStyles
+    @if (isset($threejs) && $threejs)
+        <script src="/js/three.min.js"></script>
+    @endif
 </head>
 <body>
     @include('layouts.navbar')
