@@ -25,22 +25,18 @@ class Item extends Component
     public function rules()
     {
         return [
-            'user.firstname' => 'required|min:2|max:48',
-            'user.insertion' => 'nullable|max:16',
-            'user.lastname' => 'required|min:2|max:48',
-            'user.gender' => 'nullable|integer|digits_between:' . User::GENDER_MALE . ',' . User::GENDER_OTHER,
-            'user.birthday' => 'nullable|date',
+            'user.username' => 'required|min:2|max:32',
             'user.email' => [
                 'required',
                 'email',
                 'max:255',
                 Rule::unique('users', 'email')->ignore($this->user->email, 'email')
             ],
-            'user.phone' => 'nullable|max:255',
             'newPassword' => 'nullable|min:6',
-            'newPasswordConfirmation' => $this->newPassword != null ? ['required', 'same:newPassword'] : [],
+            'newPasswordConfirmation' => 'nullable|same:user._password',
             'avatar' => 'nullable|image|mimes:jpg,jpeg,png|max:1024',
             'user.role' => 'required|integer|digits_between:' . User::ROLE_NORMAL . ',' . User::ROLE_ADMIN,
+            'user.language' => 'required|integer|in:' . User::LANGUAGE_ENGLISH,
             'user.theme' => 'required|integer|digits_between:' . User::THEME_LIGHT . ',' . User::THEME_DARK,
             'user.active' => 'nullable|boolean'
         ];
@@ -49,9 +45,6 @@ class Item extends Component
     public function editUser()
     {
         $this->validate();
-
-        if ($this->user->gender == '') $this->user->gender = null;
-        if ($this->user->birthday . '' == date('Y-m-d H:i:s')) $this->user->birthday = null;
 
         if ($this->newPassword != null) {
             $this->user->password = Hash::make($this->newPassword);
@@ -94,9 +87,8 @@ class Item extends Component
 
     public function deleteUser()
     {
+        $this->user->delete();
         $this->isDeleting = false;
-        $this->user->deleted = true;
-        $this->user->update();
         $this->emitUp('refresh');
     }
 

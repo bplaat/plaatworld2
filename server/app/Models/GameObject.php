@@ -5,35 +5,35 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class World extends Model
+class GameObject extends Model
 {
     use SoftDeletes;
 
+    protected $table = 'objects';
+
+    // A object can be a sprite
+    public const TYPE_SPRITE = 0;
+
     // Fields
     protected $attributes = [
-        'name' => 'Untitled world',
-        'width' => 50,
-        'height' => 50,
-        'spawn_position_x' => 0,
-        'spawn_position_y' => 0,
-        'spawn_position_z' => 0,
-        'spawn_rotation_x' => 0,
-        'spawn_rotation_y' => 0,
-        'spawn_rotation_z' => 0,
+        'type' => GameObject::TYPE_SPRITE,
+        'name' => 'Untitled object',
+        'width' => 1,
+        'height' => 1,
         'active' => true
     ];
 
     protected $casts = [
         'width' => 'double',
         'height' => 'double',
-        'spawn_position_x' => 'double',
-        'spawn_position_y' => 'double',
-        'spawn_position_z' => 'double',
-        'spawn_rotation_x' => 'double',
-        'spawn_rotation_y' => 'double',
-        'spawn_rotation_z' => 'double',
         'active' => 'boolean'
     ];
+
+    // A object has one texture
+    public function texture()
+    {
+        return $this->belongsTo(Texture::class);
+    }
 
     // Search by a query
     public static function search($query, $searchQuery)

@@ -19,6 +19,8 @@
                             <div class="navbar-dropdown">
                                 <a @class(['navbar-item', 'is-active' => Route::currentRouteName() == 'admin.users.crud']) href="{{ route('admin.users.crud') }}">@lang('layout.navbar.admin_users')</a>
                                 <a @class(['navbar-item', 'is-active' => Route::currentRouteName() == 'admin.worlds.crud']) href="{{ route('admin.worlds.crud') }}">@lang('layout.navbar.admin_worlds')</a>
+                                <a @class(['navbar-item', 'is-active' => Route::currentRouteName() == 'admin.textures.crud']) href="{{ route('admin.textures.crud') }}">@lang('layout.navbar.admin_textures')</a>
+                                <a @class(['navbar-item', 'is-active' => Route::currentRouteName() == 'admin.objects.crud']) href="{{ route('admin.objects.crud') }}">@lang('layout.navbar.admin_objects')</a>
                             </div>
                         </div>
                     @endif

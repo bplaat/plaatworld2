@@ -1,4 +1,6 @@
 *
 !avatars/
 !avatars/default.png
+!textures/
+!textures/default.png
 !.gitignore

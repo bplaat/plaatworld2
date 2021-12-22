@@ -22,6 +22,7 @@ class CreateObjectsTable extends Migration
             // $table->double('depth');
             $table->unsignedBigInteger('texture_id')->nullable();
             // $table->text('data');
+            $table->boolean('active');
             $table->timestamps();
             $table->softDeletes();
 

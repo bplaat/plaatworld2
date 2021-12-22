@@ -5,6 +5,8 @@ return [
     'navbar.admin_home' => 'Admin',
     'navbar.admin_users' => 'Users',
     'navbar.admin_worlds' => 'Worlds',
+    'navbar.admin_textures' => 'Textures',
+    'navbar.admin_objects' => 'Objects',
     'navbar.settings' => 'Settings',
     'navbar.logout' => 'Logout',
     'navbar.login' => 'Login',

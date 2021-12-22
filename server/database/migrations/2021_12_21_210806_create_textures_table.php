@@ -16,7 +16,8 @@ class CreateTexturesTable extends Migration
         Schema::create('textures', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('texture')->nullable();
+            $table->string('image')->nullable();
+            $table->boolean('active');
             $table->timestamps();
             $table->softDeletes();
         });

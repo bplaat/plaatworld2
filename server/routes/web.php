@@ -19,6 +19,10 @@ Route::middleware('admin')->group(function () {
     Route::get('/admin/users', App\Http\Livewire\Admin\Users\Crud::class)->name('admin.users.crud');
 
     Route::get('/admin/worlds', App\Http\Livewire\Admin\Worlds\Crud::class)->name('admin.worlds.crud');
+
+    Route::get('/admin/textures', App\Http\Livewire\Admin\Textures\Crud::class)->name('admin.textures.crud');
+
+    Route::get('/admin/objects', App\Http\Livewire\Admin\Objects\Crud::class)->name('admin.objects.crud');
 });
 
 // Guest routes

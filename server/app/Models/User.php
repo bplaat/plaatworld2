@@ -25,11 +25,11 @@ class User extends Authenticatable
     public const THEME_LIGHT = 0;
     public const THEME_DARK = 1;
 
+    // Fields
     protected $hidden = [
         'email_verified_at',
         'password',
-        'remember_token',
-        'deleted_at'
+        'remember_token'
     ];
 
     protected $attributes = [
@@ -41,8 +41,7 @@ class User extends Authenticatable
 
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'active' => 'boolean',
-        'deleted_at' => 'datetime'
+        'active' => 'boolean'
     ];
 
     // Generate a random avatar name
@@ -56,5 +55,13 @@ class User extends Authenticatable
             return static::generateAvatarName($extension);
         }
         return $avatar;
+    }
+
+    // Search by a query
+    public static function search($query, $searchQuery)
+    {
+        return $query->where('username', 'LIKE', '%' . $searchQuery . '%')
+            ->orWhere('email', 'LIKE', '%' . $searchQuery . '%')
+            ->orWhere('created_at', 'LIKE', '%' . $searchQuery . '%');
     }
 }

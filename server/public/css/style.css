@@ -1,5 +1,3 @@
-.logo{width:1.5rem;height:1.5rem;margin-right:.75rem}
-
 .column>.box:not(.not-fullheight){height:100%}
 .column>.card{display:flex;flex-direction:column;height:100%;margin-bottom:0;overflow:hidden}
 .column>.card>.card-content{flex:1;margin-bottom:0}
@@ -12,3 +10,7 @@
 .image.is-round{border-radius:50%}
 .image.is-rounded{border-radius:.375rem}
 .image.is-inline{float:left;margin-right:.75rem}
+
+.card-image-tags{position:absolute;top:.5rem;right:.5rem}
+
+.dropdown-item{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-right:1rem}

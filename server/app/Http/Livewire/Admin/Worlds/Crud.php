@@ -12,8 +12,14 @@ class Crud extends PaginationComponent
 
     public $rules = [
         'world.name' => 'required|min:2|max:48',
-        'world.width' => 'required|integer|min:1',
-        'world.height' => 'required|integer|min:1'
+        'world.width' => 'required|numeric|min:1',
+        'world.height' => 'required|numeric|min:1',
+        'world.spawn_position_x' => 'required|numeric|min:0',
+        'world.spawn_position_y' => 'required|numeric|min:0',
+        'world.spawn_position_z' => 'required|numeric|min:0',
+        'world.spawn_rotation_x' => 'required|numeric|min:0',
+        'world.spawn_rotation_y' => 'required|numeric|min:0',
+        'world.spawn_rotation_z' => 'required|numeric|min:0'
     ];
 
     public function mount()
