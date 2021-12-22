@@ -59,6 +59,12 @@
     ```
     php artisan migrate --seed
     ```
+- Start the websockets server (must be running when playing the game)
+
+    ```
+    cd server
+    php artisan websockets:serve
+    ```
 - Goto http://plaatworld2.test/ and you're done! 🎉
 
 ## macOS
@@ -164,5 +170,11 @@ TODO
 
     ```
     php artisan migrate --seed
+    ```
+- Start the websockets server (must be running when playing the game)
+
+    ```
+    cd server
+    php artisan websockets:serve
     ```
 - Goto http://plaatworld2.test/ and you're done! 🎉

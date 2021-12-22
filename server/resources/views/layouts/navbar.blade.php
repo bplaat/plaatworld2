@@ -20,6 +20,8 @@
         <div class="navbar-menu">
             @auth
                 <div class="navbar-start">
+                    <a @class(['navbar-item', 'is-active' => Route::currentRouteName() == 'play']) href="{{ route('play') }}">@lang('layout.navbar.play')</a>
+
                     @if (Auth::user()->role == App\Models\User::ROLE_ADMIN)
                         <div class="navbar-item has-dropdown is-hoverable">
                             <a @class(['navbar-link', 'is-active' => Route::currentRouteName() == 'admin.home', 'is-arrowless'])

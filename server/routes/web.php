@@ -7,6 +7,8 @@ Route::view('/', 'home')->name('home');
 
 // Normal routes
 Route::middleware('auth')->group(function () {
+    Route::view('/play', 'play')->name('play');
+
     Route::view('/settings', 'settings')->name('settings');
 
     Route::get('/auth/logout', [App\Http\Controllers\AuthController::class, 'logout'])->name('auth.logout');

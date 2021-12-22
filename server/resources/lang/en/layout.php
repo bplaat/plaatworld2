@@ -2,6 +2,7 @@
 
 return [
     // Layout navbar
+    'navbar.play' => 'Play game!',
     'navbar.admin_home' => 'Admin',
     'navbar.admin_users' => 'Users',
     'navbar.admin_worlds' => 'Worlds',

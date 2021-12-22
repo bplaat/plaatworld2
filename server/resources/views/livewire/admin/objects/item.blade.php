@@ -33,6 +33,7 @@ document.addEventListener('livewire:load', function () {
     if (data.texture == null) return;
 
     const scene = new THREE.Scene();
+    scene.background = new THREE.Color(getComputedStyle(document.querySelector('.card')).backgroundColor);
 
     const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
     camera.position.y = data.object.height / 2;
