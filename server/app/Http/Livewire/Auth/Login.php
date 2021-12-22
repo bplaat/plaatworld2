@@ -39,7 +39,6 @@ class Login extends Component
             $this->addError('password', 'null');
             return;
         }
-
         session()->regenerate();
         return redirect()->intended(route('home'));
     }

@@ -15,11 +15,7 @@
                 @endif
                 @if (is_array($element))
                     @foreach ($element as $page => $url)
-                        <li
-                            @if (count($element) == 2 && in_array(1, array_keys($element)) && $page != 1) class="is-hidden-touch" @endif
-                            @if (count($element) > 2 && ($page < $paginator->currentPage() - 1 || $page > $paginator->currentPage() + 1)) class="is-hidden-touch" @endif
-                            @if (count($element) == 2 && in_array($totalPages, array_keys($element)) && $page != $totalPages) class="is-hidden-touch" @endif
-                        >
+                        <li>
                             <a @class(['pagination-link', 'is-current' => $page == $paginator->currentPage()])
                                 wire:click="gotoPage({{ $page }})"
                                 wire:loading.attr="disabled">{{ $page }}</a>

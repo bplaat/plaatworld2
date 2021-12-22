@@ -5,7 +5,6 @@ return [
     'login.title' => 'Login',
     'login.header' => 'Login',
     'login.email' => 'Email address',
-    'login.forgot' => 'Forgot password?',
     'login.password' => 'Password',
     'login.login' => 'Login',
     'login.active_error' => 'The user of this email address is not an active user',
@@ -14,5 +13,10 @@ return [
 
     // Auth register page
     'register.title' => 'Register',
-    'register.header' => 'Register'
+    'register.header' => 'Register',
+    'register.username' => 'Username',
+    'register.email' => 'Email address',
+    'register.password' => 'Password',
+    'register.password_confirmation' => 'Password Confirmation',
+    'register.register' => 'Register'
 ];
