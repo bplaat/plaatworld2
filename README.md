@@ -1,2 +1,2 @@
-# plaatworld2
+# PlaatWorld II
 Why do I wasted my time on bullshit like this project...
