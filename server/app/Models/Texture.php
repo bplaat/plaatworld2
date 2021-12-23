@@ -13,10 +13,12 @@ class Texture extends Model
     // Fields
     protected $attributes = [
         'name' => 'Untitled texture',
+        'transparent' => false,
         'active' => true
     ];
 
     protected $casts = [
+        'transparent' => 'boolean',
         'active' => 'boolean'
     ];
 

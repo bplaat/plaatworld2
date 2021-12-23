@@ -14,6 +14,8 @@ return [
     'crud.name' => 'Name',
     'crud.image' => 'Image',
     'crud.image_help' => 'You can upload an squared .jpg or .png image',
+    'crud.transparent' => 'Transparent',
+    'crud.transparent_texture' => 'The texture is partly transparent',
     'crud.cancel' => 'Cancel',
 
     // Admin textures item livewire component
@@ -25,6 +27,8 @@ return [
     'item.image' => 'Image',
     'item.image_help' => 'You can upload an squared .jpg or .png image',
     'item.delete_image' => 'Delete texture image',
+    'item.transparent' => 'Transparent',
+    'item.transparent_texture' => 'The texture is partly transparent',
     'item.active' => 'Active',
     'item.active_texture' => 'Make texture visible in the system',
     'item.cancel' => 'Cancel',

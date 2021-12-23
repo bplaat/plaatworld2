@@ -39,6 +39,7 @@ document.addEventListener('livewire:load', function () {
 
 const data = {
     OBJECT_TYPE_SPRITE: @json(App\Models\GameObject::TYPE_SPRITE),
+    OBJECT_TYPE_FIXED_SPRITE: @json(App\Models\GameObject::TYPE_FIXED_SPRITE),
     OBJECT_TYPE_CUBE: @json(App\Models\GameObject::TYPE_CUBE),
     OBJECT_TYPE_CYLINDER: @json(App\Models\GameObject::TYPE_CYLINDER),
     OBJECT_TYPE_SPHERE: @json(App\Models\GameObject::TYPE_SPHERE),

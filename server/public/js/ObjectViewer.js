@@ -20,68 +20,41 @@ function ObjectViewer(data) {
     const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
     const cylinderGeometry = new THREE.CylinderGeometry(1, 1, 1, 32);
     const sphereGeometry = new THREE.SphereGeometry(1, 32, 16);
-    function createMesh(object) {
-        // if (object.type == data.OBJECT_TYPE_GROUP) {
-        //     const group = new THREE.Group();
-
-        //     const mesh = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshBasicMaterial({
-        //         color: 0xffffff,
-        //         wireframe: true
-        //     }));
-        //     mesh.scale.x = object.width;
-        //     mesh.scale.y = object.height;
-        //     mesh.scale.z = object.depth;
-        //     group.add(mesh);
-
-        //     for (const childObject of object.objects) {
-        //         const childMesh = createMesh(childObject);
-        //         childMesh.position.set(childObject.pivot.position_x, childObject.pivot.position_y, childObject.pivot.position_z);
-        //         childMesh.rotation.set(childObject.pivot.rotation_x, childObject.pivot.rotation_y, childObject.pivot.rotation_z);
-        //         group.add(childMesh);
-        //     }
-        //     return group;
-        // }
-        if (object.type == data.OBJECT_TYPE_SPRITE) {
-            const mesh = new THREE.Mesh(planeGeometry, new THREE.MeshBasicMaterial({
-                map: new THREE.TextureLoader().load('/storage/textures/' + object.texture.image),
-                transparent: true,
+    const materials = {};
+    function createMaterial(texture) {
+        if (materials[texture.id] == undefined) {
+            materials[texture.id] = new THREE.MeshBasicMaterial({
+                map: new THREE.TextureLoader().load('/storage/textures/' + texture.image),
+                transparent: texture.transparent,
                 side: THREE.DoubleSide
-            }));
-            mesh.scale.x = object.width;
-            mesh.scale.y = object.height;
+            });
+        }
+        return materials[texture.id];
+    }
+    function createMesh(object) {
+        if (object.type == data.OBJECT_TYPE_SPRITE || object.type == data.OBJECT_TYPE_FIXED_SPRITE) {
+            const mesh = new THREE.Mesh(planeGeometry, createMaterial(object.texture));
+            mesh.scale.set(object.width, object.height, 0);
             return mesh;
         }
         if (object.type == data.OBJECT_TYPE_CUBE) {
-            const mesh = new THREE.Mesh(boxGeometry, new THREE.MeshBasicMaterial({
-                map: new THREE.TextureLoader().load('/storage/textures/' + object.texture.image)
-            }));
-            mesh.scale.x = object.width;
-            mesh.scale.y = object.height;
-            mesh.scale.z = object.depth;
+            const mesh = new THREE.Mesh(boxGeometry, createMaterial(object.texture));
+            mesh.scale.set(object.width, object.height, object.depth);
             return mesh;
         }
         if (object.type == data.OBJECT_TYPE_CYLINDER) {
-            const mesh = new THREE.Mesh(cylinderGeometry, new THREE.MeshBasicMaterial({
-                map: new THREE.TextureLoader().load('/storage/textures/' + object.texture.image)
-            }));
-            mesh.scale.x = object.width;
-            mesh.scale.y = object.height;
-            mesh.scale.z = object.depth;
+            const mesh = new THREE.Mesh(cylinderGeometry, createMaterial(object.texture));
+            mesh.scale.set(object.width, object.height, object.depth);
             return mesh;
         }
         if (object.type == data.OBJECT_TYPE_SPHERE) {
-            const mesh = new THREE.Mesh(sphereGeometry, new THREE.MeshBasicMaterial({
-                map: new THREE.TextureLoader().load('/storage/textures/' + object.texture.image)
-            }));
-            mesh.scale.x = object.width;
-            mesh.scale.y = object.height;
-            mesh.scale.z = object.depth;
+            const mesh = new THREE.Mesh(sphereGeometry, createMaterial(object.texture));
+            mesh.scale.set(object.width, object.height, object.depth);
             return mesh;
         }
         if (object.type == data.OBJECT_TYPE_PYRAMID) {
-            const mesh = new THREE.Mesh(new THREE.CylinderGeometry(0, Math.min(object.width, object.depth), object.height, 4), new THREE.MeshBasicMaterial({
-                map: new THREE.TextureLoader().load('/storage/textures/' + object.texture.image)
-            }));
+            const mesh = new THREE.Mesh(new THREE.CylinderGeometry(0, Math.min(object.width, object.depth), object.height, 4), createMaterial(object.texture));
+            mesh.rotation.y = Math.PI / 4;
             return mesh;
         }
     }
@@ -96,7 +69,7 @@ function ObjectViewer(data) {
         function loop() {
             window.requestAnimationFrame(loop);
             const delta = clock.getDelta();
-            if (data.object.type != data.OBJECT_TYPE_SPRITE) {
+            if (data.object.type != data.OBJECT_TYPE_SPRITE && data.object.type != data.OBJECT_TYPE_FIXED_SPRITE) {
                 mesh.rotation.x += 0.5 * delta;
             }
             mesh.rotation.y += 1 * delta;

@@ -16,7 +16,8 @@ class Crud extends PaginationComponent
 
     public $rules = [
         'texture.name' => 'required|min:2|max:48',
-        'image' => 'nullable|image|mimes:jpg,jpeg,png|max:1024'
+        'image' => 'nullable|image|mimes:jpg,jpeg,png|max:1024',
+        'texture.transparent' => 'nullable|boolean'
     ];
 
     public function mount()

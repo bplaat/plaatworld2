@@ -11,6 +11,7 @@ class Editor extends Component
 
     public function mount(GameObject $object) {
         $this->object = $object;
+        $this->object->objects;
     }
 
     public function render()
@@ -19,7 +20,7 @@ class Editor extends Component
             'object' => $this->object
         ])->layout('layouts.app', [
             'title' => __('admin/objects.editor.title', ['object.name' => $this->object->name]),
-            'immersive' => true, 'vuejs' => true, 'threejs' => true, 'statsjs' => true, 'orbitcontrolsjs' => true
+            'immersive' => true, 'threejs' => true, 'statsjs' => true, 'orbitcontrolsjs' => true
         ]);
     }
 }

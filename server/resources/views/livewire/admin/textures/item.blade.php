@@ -68,12 +68,26 @@
                         </div>
                     @endif
 
-                    <div class="field">
-                        <label class="label" for="active">@lang('admin/textures.item.active')</label>
-                        <label class="checkbox" for="active">
-                            <input type="checkbox" id="active" wire:model.defer="texture.active">
-                            @lang('admin/textures.item.active_texture')
-                        </label>
+                    <div class="columns">
+                        <div class="column">
+                            <div class="field">
+                                <label class="label" for="transparent">@lang('admin/textures.item.transparent')</label>
+                                <label class="checkbox" for="transparent">
+                                    <input type="checkbox" id="transparent" wire:model.defer="texture.transparent">
+                                    @lang('admin/textures.item.transparent_texture')
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="column">
+                            <div class="field">
+                                <label class="label" for="active">@lang('admin/textures.item.active')</label>
+                                <label class="checkbox" for="active">
+                                    <input type="checkbox" id="active" wire:model.defer="texture.active">
+                                    @lang('admin/textures.item.active_texture')
+                                </label>
+                            </div>
+                        </div>
                     </div>
                 </div>
 

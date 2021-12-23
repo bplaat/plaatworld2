@@ -1,7 +1,7 @@
 <div class="column is-one-quarter">
     <div class="card">
         <div class="card-image">
-            <div style="position: relative; padding-top: 100%; background-color: #000" wire:ignore>
+            <div style="position: relative; padding-top: 100%" wire:ignore>
                 <canvas id="object-{{ $object->id}}-canvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></canvas>
             </div>
 
@@ -26,8 +26,9 @@
     <script src="/js/ObjectViewer.js"></script>
     <script>
         document.addEventListener('livewire:load', function () {
-            ObjectViewer({
+            new ObjectViewer({
                 OBJECT_TYPE_SPRITE: @json(App\Models\GameObject::TYPE_SPRITE),
+                OBJECT_TYPE_FIXED_SPRITE: @json(App\Models\GameObject::TYPE_FIXED_SPRITE),
                 OBJECT_TYPE_CUBE: @json(App\Models\GameObject::TYPE_CUBE),
                 OBJECT_TYPE_CYLINDER: @json(App\Models\GameObject::TYPE_CYLINDER),
                 OBJECT_TYPE_SPHERE: @json(App\Models\GameObject::TYPE_SPHERE),
@@ -54,6 +55,7 @@
                             <div class="select is-fullwidth @error('object.type') is-danger @enderror">
                                 <select id="type" wire:model.defer="object.type">
                                     <option value="{{ App\Models\GameObject::TYPE_SPRITE }}">@lang('admin/objects.item.type_sprite')</option>
+                                    <option value="{{ App\Models\GameObject::TYPE_FIXED_SPRITE }}">@lang('admin/objects.item.type_fixed_sprite')</option>
                                     <option value="{{ App\Models\GameObject::TYPE_CUBE }}">@lang('admin/objects.item.type_cube')</option>
                                     <option value="{{ App\Models\GameObject::TYPE_CYLINDER }}">@lang('admin/objects.item.type_cylinder')</option>
                                     <option value="{{ App\Models\GameObject::TYPE_SPHERE }}">@lang('admin/objects.item.type_sphere')</option>

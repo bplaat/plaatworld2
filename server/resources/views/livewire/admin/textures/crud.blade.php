@@ -59,6 +59,14 @@
                             <p class="help">@lang('admin/textures.crud.image_help')</p>
                         @enderror
                     </div>
+
+                    <div class="field">
+                        <label class="label" for="transparent">@lang('admin/textures.crud.transparent')</label>
+                        <label class="checkbox" for="transparent">
+                            <input type="checkbox" id="transparent" wire:model.defer="texture.transparent">
+                            @lang('admin/textures.crud.transparent_texture')
+                        </label>
+                    </div>
                 </div>
 
                 <div class="modal-card-foot">

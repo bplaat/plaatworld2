@@ -17,6 +17,7 @@ class CreateTexturesTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('image')->nullable();
+            $table->boolean('transparent');
             $table->boolean('active');
             $table->timestamps();
             $table->softDeletes();
