@@ -1,7 +1,7 @@
 <div class="column is-one-quarter">
     <div class="card">
         <div class="card-image">
-            <div style="position: relative; padding-top: 100%; background-color: #000">
+            <div style="position: relative; padding-top: 100%; background-color: #000" wire:ignore>
                 <canvas id="canvas-{{ $object->id}}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></canvas>
             </div>
 
