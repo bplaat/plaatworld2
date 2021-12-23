@@ -11,7 +11,7 @@ class Crud extends PaginationComponent
     public $isCreating;
 
     public $rules = [
-        'object.type' => 'required|integer|digits_between:' . GameObject::TYPE_SPRITE . ',' . GameObject::TYPE_CUBE,
+        'object.type' => 'required|integer|digits_between:' . GameObject::TYPE_SPRITE . ',' . GameObject::TYPE_PYRAMID,
         'object.name' => 'required|min:2|max:48',
         'object.width' => 'required|numeric|min:0.001',
         'object.height' => 'required|numeric|min:0.001',
@@ -66,7 +66,7 @@ class Crud extends PaginationComponent
         }
 
         return view('livewire.admin.objects.crud', [
-            'objects' => $objects->paginate(4 * 4)->withQueryString()
+            'objects' => $objects->with('texture')->with('objects')->paginate(4 * 4)->withQueryString()
         ])->layout('layouts.app', ['title' => __('admin/objects.crud.title'), 'threejs' => true]);
     }
 }

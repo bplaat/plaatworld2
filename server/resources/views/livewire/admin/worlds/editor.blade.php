@@ -2,7 +2,7 @@
     <canvas id="canvas"></canvas>
 
     <div id="editor">
-        <div style="position:absolute;top:20px;left:16px;background-color:#242424;padding:16px;">
+        <div class="has-background-light" style="position:absolute;top:16px;left:16px;padding:16px;">
             <h1 class="title is-5 mb-3">The PlaatWorld II Editor</h1>
             <p><i>Press C: Copy selected object</i></p>
             <p><i>Press Q: Rotate selected object to left</i></p>
@@ -15,7 +15,7 @@
             <p><i>@{{ message }}</i></p>
         </div>
 
-        <div style="position:absolute;top:20px;right:16px;background-color:#242424;padding:16px;min-width:200px;max-height:80%;overflow-y:scroll">
+        <div class="has-background-light" style="position:absolute;top:16px;right:16px;padding:16px;min-width:200px;max-height:80%;overflow-y:scroll">
             <h2 class="title is-6 mb-3">World Objects:</h2>
             <button :class="{'button': true, 'my-1': true, 'is-small': true, 'is-warning': selectedWorldObject != null && selectedWorldObject.name == worldObject.name}"
                 @click="selectedWorldObject = worldObject" :key="worldObject.name"
@@ -26,7 +26,7 @@
             <p v-if="worldObjects.length == 0"><i>No objects placed</i></p>
         </div>
 
-        <div style="position:absolute;left:16px;bottom:16px;background-color:#242424;padding:16px;">
+        <div class="has-background-light" style="position:absolute;left:16px;bottom:16px;padding:16px;">
             <h2 class="title is-6 mb-3">Objects that you can place:</h2>
             <div class="buttons">
                 <button class="button" v-for="object in objects" @click="addObject(object)" :key="object.id">@{{ object.name }}</button>
@@ -34,15 +34,15 @@
         </div>
     </div>
 
-<script src="/js/vue.min.js"></script>
-<script src="/js/stats.min.js"></script>
-<script src="/js/OrbitControls.min.js"></script>
 <script>
 document.addEventListener('livewire:load', function () {
 
 const data = {
     OBJECT_TYPE_SPRITE: @json(App\Models\GameObject::TYPE_SPRITE),
     OBJECT_TYPE_CUBE: @json(App\Models\GameObject::TYPE_CUBE),
+    OBJECT_TYPE_CYLINDER: @json(App\Models\GameObject::TYPE_CYLINDER),
+    OBJECT_TYPE_SPHERE: @json(App\Models\GameObject::TYPE_SPHERE),
+    OBJECT_TYPE_PYRAMID: @json(App\Models\GameObject::TYPE_PYRAMID),
     world: @json($world),
     objects: @json(App\Models\GameObject::orderByRaw('LOWER(name)')->with('texture')->get()),
     worldObjects: @json($worldObjects),
@@ -108,7 +108,7 @@ groundMaterial.map.wrapS = THREE.RepeatWrapping;
 groundMaterial.map.wrapT = THREE.RepeatWrapping;
 const ground = new THREE.Mesh(groundGeometry, groundMaterial);
 ground.rotation.x = -Math.PI / 2;
-    ground.position.y = -0.001;
+    ground.position.y = -0.01;
 grounds.add(ground);
 
 // Sprite objects group

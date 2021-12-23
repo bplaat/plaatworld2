@@ -8,14 +8,14 @@
                 wire:model="textureName" id="textureName" autocomplete="off" wire:keydown.enter.prevent="selectFirstTexture"
                 wire:focus="$set('isOpen', true)" wire:blur.debounce.100ms="$set('isOpen', false)">
             <span class="icon is-small is-left">
-                <div class="image is-small is-rounded" style="background-image: url(/storage/textures/{{ $texture != null && $texture->image != null ? $texture->image : 'default.png' }});"></div>
+                <div class="image is-small" style="background-image: url(/storage/textures/{{ $texture != null && $texture->image != null ? $texture->image : 'default.png' }});"></div>
             </span>
         </div>
         <div class="dropdown-menu" style="width: 100%;">
             <div class="dropdown-content">
                 @forelse ($filteredTextures as $texture)
                     <a wire:click.prevent="selectTexture({{ $texture->id }})" class="dropdown-item" wire:key="{{ $texture->id }}">
-                        <div class="image is-small is-rounded is-inline" style="background-image: url(/storage/textures/{{ $texture->image ?? 'default.png' }});"></div>
+                        <div class="image is-small is-inline" style="background-image: url(/storage/textures/{{ $texture->image ?? 'default.png' }});"></div>
                         {!! $textureName != '' ? str_replace(' ', '&nbsp;', preg_replace('#(' . preg_quote($textureName) . ')#i', '<b>$1</b>', $texture->name)) : $texture->name !!}
                     </a>
                 @empty

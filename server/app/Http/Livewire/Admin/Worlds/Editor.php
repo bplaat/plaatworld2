@@ -35,16 +35,23 @@ class Editor extends Component
     {
         return view('livewire.admin.worlds.editor', [
             'worldObjects' => $this->world->objects->map(fn ($worldObject) => [
-                'object_id' => $worldObject->id, 'name' => $worldObject->pivot->name, 'position' => [
+                'id' => $worldObject->pivot->id,
+                'object_id' => $worldObject->id,
+                'name' => $worldObject->pivot->name,
+                'position' => [
                     'x' => $worldObject->pivot->position_x,
                     'y' => $worldObject->pivot->position_y,
                     'z' => $worldObject->pivot->position_z
-                ], 'rotation' => [
+                ],
+                'rotation' => [
                     'x' => $worldObject->pivot->rotation_x,
                     'y' => $worldObject->pivot->rotation_y,
                     'z' => $worldObject->pivot->rotation_z
-                ]]
-            )
-        ])->layout('layouts.app', ['title' => __('admin/worlds.editor.title', ['world.name' => $this->world->name]), 'immersive' => true, 'threejs' => true]);
+                ]
+            ])
+        ])->layout('layouts.app', [
+            'title' => __('admin/worlds.editor.title', ['world.name' => $this->world->name]),
+            'immersive' => true, 'vuejs' => true, 'threejs' => true, 'statsjs' => true, 'orbitcontrolsjs' => true
+        ]);
     }
 }

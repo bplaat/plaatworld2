@@ -17,3 +17,7 @@
 .card-image-tags{position:absolute;top:.5rem;right:.5rem}
 
 .dropdown-item{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-right:1rem}
+
+@media (min-width: 1024px) {
+    html.has-navbar-fixed-top{padding-top:3.5rem}
+}

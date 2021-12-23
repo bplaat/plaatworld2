@@ -4,6 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Chat extends Model
+class WorldChat extends Model
 {
 }

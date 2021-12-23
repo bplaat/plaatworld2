@@ -46,6 +46,9 @@
                                 <select id="type" wire:model.defer="object.type">
                                     <option value="{{ App\Models\GameObject::TYPE_SPRITE }}">@lang('admin/objects.crud.type_sprite')</option>
                                     <option value="{{ App\Models\GameObject::TYPE_CUBE }}">@lang('admin/objects.crud.type_cube')</option>
+                                    <option value="{{ App\Models\GameObject::TYPE_CYLINDER }}">@lang('admin/objects.crud.type_cylinder')</option>
+                                    <option value="{{ App\Models\GameObject::TYPE_SPHERE }}">@lang('admin/objects.crud.type_sphere')</option>
+                                    <option value="{{ App\Models\GameObject::TYPE_PYRAMID }}">@lang('admin/objects.crud.type_pyramid')</option>
                                 </select>
                             </div>
                         </div>

@@ -14,6 +14,9 @@ return [
     'crud.type' => 'Type',
     'crud.type_sprite' => 'Sprite',
     'crud.type_cube' => 'Cube',
+    'crud.type_cylinder' => 'Cylinder',
+    'crud.type_sphere' => 'Sphere',
+    'crud.type_pyramid' => 'Pyramid',
     'crud.name' => 'Name',
     'crud.width' => 'Width',
     'crud.height' => 'Height',
@@ -22,12 +25,16 @@ return [
 
     // Admin objects item livewire component
     'item.inactive' => 'Inactive',
+    'item.editor' => 'Editor',
     'item.edit' => 'Edit',
     'item.delete' => 'Delete',
     'item.edit_object' => 'Edit object',
     'item.type' => 'Type',
     'item.type_sprite' => 'Sprite',
     'item.type_cube' => 'Cube',
+    'item.type_cylinder' => 'Cylinder',
+    'item.type_sphere' => 'Sphere',
+    'item.type_pyramid' => 'Pyramid',
     'item.name' => 'Name',
     'item.width' => 'Width',
     'item.height' => 'Height',
@@ -36,5 +43,8 @@ return [
     'item.active_object' => 'Make object visible in the system',
     'item.cancel' => 'Cancel',
     'item.delete_object' => 'Delete object',
-    'item.delete_description' => 'Are you sure you want to delete this object and all it\'s history?'
+    'item.delete_description' => 'Are you sure you want to delete this object and all it\'s history?',
+
+    // Admin objects editor livewire component
+    'editor.title' => 'Editor - :object.name - Objects - Admin'
 ];

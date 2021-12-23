@@ -12,7 +12,7 @@ class Item extends Component
     public $isDeleting = false;
 
     public $rules = [
-        'object.type' => 'required|integer|digits_between:' . GameObject::TYPE_SPRITE . ',' . GameObject::TYPE_CUBE,
+        'object.type' => 'required|integer|digits_between:' . GameObject::TYPE_SPRITE . ',' . GameObject::TYPE_PYRAMID,
         'object.name' => 'required|min:2|max:48',
         'object.width' => 'required|numeric|min:0.001',
         'object.height' => 'required|numeric|min:0.001',
@@ -47,7 +47,7 @@ class Item extends Component
 
     public function render()
     {
-        unset($this->object->texture);
+        // unset($this->object->texture);
         return view('livewire.admin.objects.item');
     }
 }

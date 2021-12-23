@@ -57,6 +57,14 @@ class User extends Authenticatable
         return $avatar;
     }
 
+    // Get the current used api token from session storage or create a new one
+    public function authToken() {
+        if (session('auth_token') == null) {
+            session(['auth_token' => $this->createToken('API auth token for website')->plainTextToken]);
+        }
+        return session('auth_token');
+    }
+
     // Search by a query
     public static function search($query, $searchQuery)
     {

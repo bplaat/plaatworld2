@@ -2,7 +2,7 @@
     <div class="card">
         <div class="card-image">
             <div style="position: relative; padding-top: 100%; background-color: #000" wire:ignore>
-                <canvas id="canvas-{{ $object->id}}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></canvas>
+                <canvas id="object-{{ $object->id}}-canvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></canvas>
             </div>
 
             <div class="card-image-tags">
@@ -17,71 +17,24 @@
         </div>
 
         <div class="card-footer">
+            <a class="card-footer-item" href="{{ route('admin.objects.editor', $object) }}">@lang('admin/objects.item.editor')</a>
             <a class="card-footer-item" wire:click.prevent="$set('isEditing', true)">@lang('admin/objects.item.edit')</a>
             <a class="card-footer-item has-text-danger" wire:click.prevent="$set('isDeleting', true)">@lang('admin/objects.item.delete')</a>
         </div>
     </div>
 
+    <script src="/js/ObjectViewer.js"></script>
     <script>
-document.addEventListener('livewire:load', function () {
-    const data = {
-        OBJECT_TYPE_SPRITE: @json(App\Models\GameObject::TYPE_SPRITE),
-        OBJECT_TYPE_CUBE: @json(App\Models\GameObject::TYPE_CUBE),
-        object: @json($object),
-        texture: @json(App\Models\Texture::find($object->texture_id))
-    };
-    if (data.texture == null) return;
-
-    const scene = new THREE.Scene();
-    scene.background = new THREE.Color(getComputedStyle(document.querySelector('.card')).backgroundColor);
-
-    const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
-    camera.position.y = data.object.height / 2;
-    camera.position.z = data.object.depth + Math.max(data.object.width, data.object.height, data.object.depth) * 1.25;
-
-    const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('canvas-{{ $object->id}}') });
-    function resize() {
-        const size = document.querySelector('.card-image').offsetWidth;
-        camera.updateProjectionMatrix();
-        renderer.setSize(size, size);
-    }
-    window.addEventListener('resize', resize);
-    resize();
-
-    // Create mesh
-    let mesh;
-    if (data.object.type == data.OBJECT_TYPE_SPRITE) {
-        mesh = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({
-            map: new THREE.TextureLoader().load('/storage/textures/' + data.texture.image),
-            transparent: true,
-            side: THREE.DoubleSide
-        }));
-        mesh.scale.x = data.object.width;
-        mesh.scale.y = data.object.height;
-        mesh.position.y = data.object.height / 2;
-        scene.add(mesh);
-    }
-    if (data.object.type == data.OBJECT_TYPE_CUBE) {
-        mesh = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshBasicMaterial({
-            map: new THREE.TextureLoader().load('/storage/textures/' + data.texture.image)
-        }));
-        mesh.scale.x = data.object.width;
-        mesh.scale.y = data.object.height;
-        mesh.scale.z = data.object.depth;
-        mesh.position.y = data.object.height / 2;
-        scene.add(mesh);
-    }
-
-    // Loop and rotate camera
-    const clock = new THREE.Clock();
-    function loop() {
-        window.requestAnimationFrame(loop);
-        const delta = clock.getDelta();
-        mesh.rotation.y += 1 * delta;
-        renderer.render(scene, camera);
-    }
-    loop();
-});
+        document.addEventListener('livewire:load', function () {
+            ObjectViewer({
+                OBJECT_TYPE_SPRITE: @json(App\Models\GameObject::TYPE_SPRITE),
+                OBJECT_TYPE_CUBE: @json(App\Models\GameObject::TYPE_CUBE),
+                OBJECT_TYPE_CYLINDER: @json(App\Models\GameObject::TYPE_CYLINDER),
+                OBJECT_TYPE_SPHERE: @json(App\Models\GameObject::TYPE_SPHERE),
+                OBJECT_TYPE_PYRAMID: @json(App\Models\GameObject::TYPE_PYRAMID),
+                object: @json($object)
+            });
+        });
     </script>
 
     @if ($isEditing)
@@ -102,6 +55,9 @@ document.addEventListener('livewire:load', function () {
                                 <select id="type" wire:model.defer="object.type">
                                     <option value="{{ App\Models\GameObject::TYPE_SPRITE }}">@lang('admin/objects.item.type_sprite')</option>
                                     <option value="{{ App\Models\GameObject::TYPE_CUBE }}">@lang('admin/objects.item.type_cube')</option>
+                                    <option value="{{ App\Models\GameObject::TYPE_CYLINDER }}">@lang('admin/objects.item.type_cylinder')</option>
+                                    <option value="{{ App\Models\GameObject::TYPE_SPHERE }}">@lang('admin/objects.item.type_sphere')</option>
+                                    <option value="{{ App\Models\GameObject::TYPE_PYRAMID }}">@lang('admin/objects.item.type_pyramid')</option>
                                 </select>
                             </div>
                         </div>

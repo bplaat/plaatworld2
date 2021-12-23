@@ -22,9 +22,6 @@ return [
     'crud.spawn_rotation_z' => 'Spawn rotation Z',
     'crud.cancel' => 'Cancel',
 
-    // Admin worlds editor livewire component
-    'editor.title' => 'Editor - :world.name - Worlds - Admin',
-
     // Admin worlds item livewire component
     'item.inactive' => 'Inactive',
     'item.editor' => 'Editor',
@@ -44,5 +41,8 @@ return [
     'item.active_world' => 'Make world visible in the system',
     'item.cancel' => 'Cancel',
     'item.delete_world' => 'Delete world',
-    'item.delete_description' => 'Are you sure you want to delete this world and all it\'s history?'
+    'item.delete_description' => 'Are you sure you want to delete this world and all it\'s history?',
+
+    // Admin worlds editor livewire component
+    'editor.title' => 'Editor - :world.name - Worlds - Admin'
 ];
