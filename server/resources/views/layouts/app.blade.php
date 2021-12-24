@@ -26,7 +26,7 @@
     @if (isset($threejs) && $threejs)
         <script src="/js/three.min.js"></script>
     @endif
-    @if (isset($statsjs) && $statsjs)
+    @if (isset($statsjs) && $statsjs && config('app.debug') == true)
         <script src="/js/stats.min.js"></script>
     @endif
     @if (isset($orbitcontrolsjs) && $orbitcontrolsjs)

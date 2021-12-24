@@ -36,7 +36,7 @@ class CreateWorldEditorUserTable extends Migration
 
             $table->foreign('selected_object_id')
                 ->references('id')
-                ->on('objects');
+                ->on('world_object');
 
             $table->unique(['world_id', 'user_id']);
         });

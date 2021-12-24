@@ -36,7 +36,7 @@ class CreateObjectEditorUserTable extends Migration
 
             $table->foreign('selected_object_id')
                 ->references('id')
-                ->on('objects');
+                ->on('object_object');
 
             $table->unique(['object_id', 'user_id']);
         });

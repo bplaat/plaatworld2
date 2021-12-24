@@ -1,5 +1,7 @@
+[v-cloak]{display:none}
 .is-immersive{overflow:hidden}
 .logo{width:1.5rem;height:1.5rem;margin-right:0.75rem}
+.immersive{position:relative;height:calc(100vh - 3.25rem)}
 
 .column>.box:not(.not-fullheight){height:100%}
 .column>.card{display:flex;flex-direction:column;height:100%;margin-bottom:0;overflow:hidden}
@@ -20,4 +22,5 @@
 
 @media (min-width: 1024px) {
     html.has-navbar-fixed-top{padding-top:3.5rem}
+    .immersive{position:relative;height:calc(100vh - 3.5rem)}
 }

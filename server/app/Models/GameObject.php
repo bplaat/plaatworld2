@@ -11,13 +11,14 @@ class GameObject extends Model
 
     protected $table = 'objects';
 
-    // A object can be a sprite, a fixed sprite, a cube, a cylinder, a sphere or a pyramid
-    public const TYPE_SPRITE = 0;
-    public const TYPE_FIXED_SPRITE = 1;
-    public const TYPE_CUBE = 2;
-    public const TYPE_CYLINDER = 3;
-    public const TYPE_SPHERE = 4;
-    public const TYPE_PYRAMID = 5;
+    // A object can be a group, a sprite, a fixed sprite, a cube, a cylinder, a sphere or a pyramid
+    public const TYPE_GROUP = 0;
+    public const TYPE_SPRITE = 1;
+    public const TYPE_FIXED_SPRITE = 2;
+    public const TYPE_CUBE = 3;
+    public const TYPE_CYLINDER = 4;
+    public const TYPE_SPHERE = 5;
+    public const TYPE_PYRAMID = 6;
 
     // Fields
     protected $attributes = [

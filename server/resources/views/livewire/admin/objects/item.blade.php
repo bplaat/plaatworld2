@@ -17,7 +17,9 @@
         </div>
 
         <div class="card-footer">
-            <a class="card-footer-item" href="{{ route('admin.objects.editor', $object) }}">@lang('admin/objects.item.editor')</a>
+            @if ($object->type == App\Models\GameObject::TYPE_GROUP)
+                <a class="card-footer-item" href="{{ route('admin.objects.editor', $object) }}">@lang('admin/objects.item.editor')</a>
+            @endif
             <a class="card-footer-item" wire:click.prevent="$set('isEditing', true)">@lang('admin/objects.item.edit')</a>
             <a class="card-footer-item has-text-danger" wire:click.prevent="$set('isDeleting', true)">@lang('admin/objects.item.delete')</a>
         </div>
@@ -27,13 +29,18 @@
     <script>
         document.addEventListener('livewire:load', function () {
             new ObjectViewer({
+                OBJECT_TYPE_GROUP: @json(App\Models\GameObject::TYPE_GROUP),
                 OBJECT_TYPE_SPRITE: @json(App\Models\GameObject::TYPE_SPRITE),
                 OBJECT_TYPE_FIXED_SPRITE: @json(App\Models\GameObject::TYPE_FIXED_SPRITE),
                 OBJECT_TYPE_CUBE: @json(App\Models\GameObject::TYPE_CUBE),
                 OBJECT_TYPE_CYLINDER: @json(App\Models\GameObject::TYPE_CYLINDER),
                 OBJECT_TYPE_SPHERE: @json(App\Models\GameObject::TYPE_SPHERE),
                 OBJECT_TYPE_PYRAMID: @json(App\Models\GameObject::TYPE_PYRAMID),
-                object: @json($object)
+                canvas: document.getElementById('object-' + @json($object->id) + '-canvas'),
+                backgroundColor: getComputedStyle(document.querySelector('.card')).backgroundColor,
+                canvasSize: () => document.querySelector('.card-image').offsetWidth,
+                object: @json($object),
+                animated: true
             });
         });
     </script>
@@ -54,6 +61,7 @@
                         <div class="control">
                             <div class="select is-fullwidth @error('object.type') is-danger @enderror">
                                 <select id="type" wire:model.defer="object.type">
+                                    <option value="{{ App\Models\GameObject::TYPE_GROUP }}">@lang('admin/objects.item.type_group')</option>
                                     <option value="{{ App\Models\GameObject::TYPE_SPRITE }}">@lang('admin/objects.item.type_sprite')</option>
                                     <option value="{{ App\Models\GameObject::TYPE_FIXED_SPRITE }}">@lang('admin/objects.item.type_fixed_sprite')</option>
                                     <option value="{{ App\Models\GameObject::TYPE_CUBE }}">@lang('admin/objects.item.type_cube')</option>

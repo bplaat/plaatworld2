@@ -44,6 +44,7 @@
                         <div class="control">
                             <div class="select is-fullwidth @error('object.type') is-danger @enderror">
                                 <select id="type" wire:model.defer="object.type">
+                                    <option value="{{ App\Models\GameObject::TYPE_GROUP }}">@lang('admin/objects.crud.type_group')</option>
                                     <option value="{{ App\Models\GameObject::TYPE_SPRITE }}">@lang('admin/objects.crud.type_sprite')</option>
                                     <option value="{{ App\Models\GameObject::TYPE_FIXED_SPRITE }}">@lang('admin/objects.crud.type_fixed_sprite')</option>
                                     <option value="{{ App\Models\GameObject::TYPE_CUBE }}">@lang('admin/objects.crud.type_cube')</option>

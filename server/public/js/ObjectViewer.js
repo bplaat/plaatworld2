@@ -1,16 +1,18 @@
 function ObjectViewer(data) {
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(getComputedStyle(document.querySelector('.card')).backgroundColor);
+    scene.background = new THREE.Color(data.backgroundColor);
 
     const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
     camera.position.y = data.object.height / 2;
     camera.position.z = data.object.depth + Math.max(data.object.width, data.object.height, data.object.depth);
 
-    const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('object-' + data.object.id + '-canvas') });
+    const renderer = new THREE.WebGLRenderer({ canvas: data.canvas });
     function resize() {
-        const size = document.querySelector('.card-image').offsetWidth;
-        camera.updateProjectionMatrix();
+        const size = data.canvasSize();
         renderer.setSize(size, size);
+        if (!data.animated) {
+            renderer.render(scene, camera);
+        }
     }
     window.addEventListener('resize', resize);
     resize();
@@ -24,7 +26,11 @@ function ObjectViewer(data) {
     function createMaterial(texture) {
         if (materials[texture.id] == undefined) {
             materials[texture.id] = new THREE.MeshBasicMaterial({
-                map: new THREE.TextureLoader().load('/storage/textures/' + texture.image),
+                map: new THREE.TextureLoader().load('/storage/textures/' + texture.image, function () {
+                    if (!data.animated) {
+                        renderer.render(scene, camera);
+                    }
+                }),
                 transparent: texture.transparent,
                 side: THREE.DoubleSide
             });
@@ -75,6 +81,10 @@ function ObjectViewer(data) {
             mesh.rotation.y += 1 * delta;
             renderer.render(scene, camera);
         }
-        loop();
+        if (data.animated) {
+            loop();
+        } else {
+            renderer.render(scene, camera);
+        }
     }
 }

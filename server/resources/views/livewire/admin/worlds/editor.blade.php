@@ -38,6 +38,7 @@
 document.addEventListener('livewire:load', function () {
 
 const data = {
+    OBJECT_TYPE_GROUP: @json(App\Models\GameObject::TYPE_GROUP),
     OBJECT_TYPE_SPRITE: @json(App\Models\GameObject::TYPE_SPRITE),
     OBJECT_TYPE_FIXED_SPRITE: @json(App\Models\GameObject::TYPE_FIXED_SPRITE),
     OBJECT_TYPE_CUBE: @json(App\Models\GameObject::TYPE_CUBE),
@@ -186,8 +187,8 @@ const editor = new Vue({
             const intersects = raycaster.intersectObjects(grounds.children);
             if (intersects.length > 0) {
                 const point = intersects[0].point;
-                this.selectedWorldObject.position.x = point.x.toFixed(3);
-                this.selectedWorldObject.position.z = point.z.toFixed(3);
+                this.selectedWorldObject.position.x = point.x;
+                this.selectedWorldObject.position.z = point.z;
                 this.selectedWorldObject.mesh.position.x = this.selectedWorldObject.position.x;
                 this.selectedWorldObject.mesh.position.z = this.selectedWorldObject.position.z;
             }

@@ -82,18 +82,21 @@ function Game(data) {
     scene.add(spawn);
 
     // Stats
-    const stats = new Stats();
-    stats.dom.style.top = '';
-    stats.dom.style.left = '';
-    stats.dom.style.right = '16px';
-    stats.dom.style.bottom = '16px';
-    document.body.appendChild(stats.dom);
+    let stats;
+    if ('Stats' in window) {
+        stats = new Stats();
+        stats.dom.style.top = '';
+        stats.dom.style.left = '';
+        stats.dom.style.right = '16px';
+        stats.dom.style.bottom = '16px';
+        document.body.appendChild(stats.dom);
+    }
 
     // Loop
     const clock = new THREE.Clock();
     function loop() {
         window.requestAnimationFrame(loop);
-        stats.begin();
+        if ('Stats' in window) stats.begin();
 
         const delta = clock.getDelta();
 
@@ -102,7 +105,7 @@ function Game(data) {
         spawn.rotation.y += 1 * delta;
 
         renderer.render(scene, camera);
-        stats.end();
+        if ('Stats' in window) stats.end();
     }
     loop();
 }

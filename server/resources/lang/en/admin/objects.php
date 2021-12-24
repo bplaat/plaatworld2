@@ -12,6 +12,7 @@ return [
     'crud.objects' => 'objects',
     'crud.empty' => 'No objects found!',
     'crud.type' => 'Type',
+    'crud.type_group' => 'Group',
     'crud.type_sprite' => 'Sprite',
     'crud.type_fixed_sprite' => 'Fixed sprite',
     'crud.type_cube' => 'Cube',
@@ -19,9 +20,9 @@ return [
     'crud.type_sphere' => 'Sphere',
     'crud.type_pyramid' => 'Pyramid',
     'crud.name' => 'Name',
-    'crud.width' => 'Width',
-    'crud.height' => 'Height',
-    'crud.depth' => 'Depth',
+    'crud.width' => 'Width (m)',
+    'crud.height' => 'Height (m)',
+    'crud.depth' => 'Depth (m)',
     'crud.cancel' => 'Cancel',
 
     // Admin objects item livewire component
@@ -31,6 +32,7 @@ return [
     'item.delete' => 'Delete',
     'item.edit_object' => 'Edit object',
     'item.type' => 'Type',
+    'item.type_group' => 'Group',
     'item.type_sprite' => 'Sprite',
     'item.type_fixed_sprite' => 'Fixed sprite',
     'item.type_cube' => 'Cube',
@@ -38,9 +40,9 @@ return [
     'item.type_sphere' => 'Sphere',
     'item.type_pyramid' => 'Pyramid',
     'item.name' => 'Name',
-    'item.width' => 'Width',
-    'item.height' => 'Height',
-    'item.depth' => 'Depth',
+    'item.width' => 'Width (m)',
+    'item.height' => 'Height (m)',
+    'item.depth' => 'Depth (m)',
     'item.active' => 'Active',
     'item.active_object' => 'Make object visible in the system',
     'item.cancel' => 'Cancel',
@@ -48,5 +50,19 @@ return [
     'item.delete_description' => 'Are you sure you want to delete this object and all it\'s history?',
 
     // Admin objects editor livewire component
-    'editor.title' => 'Editor - :object.name - Objects - Admin'
+    'editor.title' => 'Editor - :object.name - Objects - Admin',
+    'editor.header' => 'Object Editor',
+    'editor.save' => 'Save',
+    'editor.saved' => 'Saved!',
+    'editor.exit' => 'Exit',
+    'editor.objects' => 'Objects',
+    'editor.name' => 'Name',
+    'editor.position' => 'Position',
+    'editor.position_x' => 'Position X (m)',
+    'editor.position_y' => 'Position Y (m)',
+    'editor.position_z' => 'Position Z (m)',
+    'editor.rotation' => 'Rotation',
+    'editor.rotation_x' => 'Rotation X (&deg;)',
+    'editor.rotation_y' => 'Rotation Y (&deg;)',
+    'editor.rotation_z' => 'Rotation Z (&deg;)'
 ];

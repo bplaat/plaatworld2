@@ -11,7 +11,7 @@ class Crud extends PaginationComponent
     public $isCreating;
 
     public $rules = [
-        'object.type' => 'required|integer|digits_between:' . GameObject::TYPE_SPRITE . ',' . GameObject::TYPE_PYRAMID,
+        'object.type' => 'required|integer|digits_between:' . GameObject::TYPE_GROUP . ',' . GameObject::TYPE_PYRAMID,
         'object.name' => 'required|min:2|max:48',
         'object.width' => 'required|numeric|min:0.001',
         'object.height' => 'required|numeric|min:0.001',
