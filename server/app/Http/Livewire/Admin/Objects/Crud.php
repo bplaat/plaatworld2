@@ -65,8 +65,13 @@ class Crud extends PaginationComponent
             $objects = $objects->orderBy('created_at');
         }
 
-        return view('livewire.admin.objects.crud', [
-            'objects' => $objects->with('texture')->with('objects')->paginate(4 * 4)->withQueryString()
-        ])->layout('layouts.app', ['title' => __('admin/objects.crud.title'), 'threejs' => true]);
+        $objects = $objects->with('texture')->with('objects')->paginate(4 * 4)->withQueryString();
+        for ($i = 0; $i < $objects->count(); $i++) {
+            for ($j = 0; $j < $objects[$i]->objects->count(); $j++) {
+                $objects[$i]->objects[$j]->texture;
+            }
+        }
+        return view('livewire.admin.objects.crud', ['objects' => $objects])
+        ->layout('layouts.app', ['title' => __('admin/objects.crud.title'), 'threejs' => true]);
     }
 }

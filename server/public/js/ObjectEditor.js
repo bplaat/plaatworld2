@@ -296,7 +296,6 @@ function ObjectEditor(data) {
 
             // Editor
             updateObjectIds(objectIds) {
-                console.log(objectIds);
                 this.object.objects.map(object => {
                     if (object.pivot.id in objectIds) {
                         object.pivot.id = objectIds[object.pivot.id];

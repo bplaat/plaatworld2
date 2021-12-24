@@ -22,6 +22,7 @@ function ObjectViewer(data) {
     const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
     const cylinderGeometry = new THREE.CylinderGeometry(1, 1, 1, 32);
     const sphereGeometry = new THREE.SphereGeometry(1, 32, 16);
+
     const materials = {};
     function createMaterial(texture) {
         if (materials[texture.id] == undefined) {
@@ -37,32 +38,39 @@ function ObjectViewer(data) {
         }
         return materials[texture.id];
     }
+
     function createMesh(object) {
+        let mesh;
+        if (object.type == data.OBJECT_TYPE_GROUP) {
+            mesh = new THREE.Group();
+            for (const childObject of object.objects) {
+                const child = createMesh(childObject);
+                child.position.set(childObject.pivot.position_x, childObject.pivot.position_y + childObject.height / 2, childObject.pivot.position_z);
+                child.rotation.set(childObject.pivot.rotation_x, childObject.pivot.rotation_y, childObject.pivot.rotation_z);
+                mesh.add(child);
+            }
+        }
         if (object.type == data.OBJECT_TYPE_SPRITE || object.type == data.OBJECT_TYPE_FIXED_SPRITE) {
-            const mesh = new THREE.Mesh(planeGeometry, createMaterial(object.texture));
+            mesh = new THREE.Mesh(planeGeometry, createMaterial(object.texture));
             mesh.scale.set(object.width, object.height, 0);
-            return mesh;
         }
         if (object.type == data.OBJECT_TYPE_CUBE) {
-            const mesh = new THREE.Mesh(boxGeometry, createMaterial(object.texture));
+            mesh = new THREE.Mesh(boxGeometry, createMaterial(object.texture));
             mesh.scale.set(object.width, object.height, object.depth);
-            return mesh;
         }
         if (object.type == data.OBJECT_TYPE_CYLINDER) {
-            const mesh = new THREE.Mesh(cylinderGeometry, createMaterial(object.texture));
+            mesh = new THREE.Mesh(cylinderGeometry, createMaterial(object.texture));
             mesh.scale.set(object.width, object.height, object.depth);
-            return mesh;
         }
         if (object.type == data.OBJECT_TYPE_SPHERE) {
-            const mesh = new THREE.Mesh(sphereGeometry, createMaterial(object.texture));
+            mesh = new THREE.Mesh(sphereGeometry, createMaterial(object.texture));
             mesh.scale.set(object.width, object.height, object.depth);
-            return mesh;
         }
         if (object.type == data.OBJECT_TYPE_PYRAMID) {
-            const mesh = new THREE.Mesh(new THREE.CylinderGeometry(0, Math.min(object.width, object.depth), object.height, 4), createMaterial(object.texture));
+            mesh = new THREE.Mesh(new THREE.CylinderGeometry(0, Math.min(object.width, object.depth), object.height, 4), createMaterial(object.texture));
             mesh.rotation.y = Math.PI / 4;
-            return mesh;
         }
+        return mesh;
     }
 
     // Add mesh, loop and rotate mesh

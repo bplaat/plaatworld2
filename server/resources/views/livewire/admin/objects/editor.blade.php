@@ -98,7 +98,7 @@
     <script src="/js/ObjectViewer.js"></script>
     <script src="/js/ObjectEditor.js"></script>
     <script>
-        document.addEventListener('livewire:load', function () {
+        document.addEventListener('livewire:load', () => {
             new ObjectEditor({
                 OBJECT_TYPE_GROUP: @json(App\Models\GameObject::TYPE_GROUP),
                 OBJECT_TYPE_SPRITE: @json(App\Models\GameObject::TYPE_SPRITE),
