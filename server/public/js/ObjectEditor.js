@@ -47,7 +47,6 @@ function ObjectEditor(data) {
         }
         if (object.type == data.OBJECT_TYPE_PYRAMID) {
             mesh = new THREE.Mesh(new THREE.CylinderGeometry(0, Math.min(object.width, object.depth), object.height, 4), createMaterial(object.texture_id));
-            mesh.rotation.y = Math.PI / 4;
         }
         return mesh;
     }
@@ -106,7 +105,7 @@ function ObjectEditor(data) {
                 object.pivot.position_x = position_x;
                 const mesh = meshes.children.find(mesh => mesh.userData.pivot.id == this.selectedObjectId);
                 mesh.position.x = position_x;
-                wireframe.position.x = position_x;
+                wireframe.position.x = mesh.position.x;
             },
             'selectedObject.position_y': function (position_y) {
                 if (this.stopWatching) return;
@@ -114,7 +113,7 @@ function ObjectEditor(data) {
                 object.pivot.position_y = position_y;
                 const mesh = meshes.children.find(mesh => mesh.userData.pivot.id == this.selectedObjectId);
                 mesh.position.y = parseFloat(position_y) + object.height / 2;
-                wireframe.position.y = parseFloat(position_y) + object.height / 2;
+                wireframe.position.y = mesh.position.y;
             },
             'selectedObject.position_z': function (position_z) {
                 if (this.stopWatching) return;
@@ -122,7 +121,7 @@ function ObjectEditor(data) {
                 object.pivot.position_z = position_z;
                 const mesh = meshes.children.find(mesh => mesh.userData.pivot.id == this.selectedObjectId);
                 mesh.position.z = position_z;
-                wireframe.position.z = position_z;
+                wireframe.position.z = mesh.position.z;
             },
             'selectedObject.rotation_x': function (rotation_x) {
                 if (this.stopWatching) return;
@@ -131,7 +130,7 @@ function ObjectEditor(data) {
                 object.pivot.rotation_x = real_rotation_x;
                 const mesh = meshes.children.find(mesh => mesh.userData.pivot.id == this.selectedObjectId);
                 mesh.rotation.x = real_rotation_x;
-                wireframe.rotation.x = real_rotation_x;
+                wireframe.rotation.x = mesh.rotation.x;
             },
             'selectedObject.rotation_y': function (rotation_y) {
                 if (this.stopWatching) return;
@@ -140,7 +139,7 @@ function ObjectEditor(data) {
                 object.pivot.rotation_y = real_rotation_y;
                 const mesh = meshes.children.find(mesh => mesh.userData.pivot.id == this.selectedObjectId);
                 mesh.rotation.y = real_rotation_y;
-                wireframe.rotation.y = real_rotation_y;
+                wireframe.rotation.y = mesh.rotation.y;
             },
             'selectedObject.rotation_z': function (rotation_z) {
                 if (this.stopWatching) return;
@@ -149,7 +148,7 @@ function ObjectEditor(data) {
                 object.pivot.rotation_z = real_rotation_z;
                 const mesh = meshes.children.find(mesh => mesh.userData.pivot.id == this.selectedObjectId);
                 mesh.rotation.z = real_rotation_z;
-                wireframe.rotation.z = real_rotation_z;
+                wireframe.rotation.z = mesh.rotation.z;
             }
         },
 
@@ -179,6 +178,7 @@ function ObjectEditor(data) {
                 renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('object-editor-canvas') });
                 window.addEventListener('resize', this.rendererResize.bind(this));
                 renderer.domElement.addEventListener('mouseup', this.rendererMouseup.bind(this));
+                renderer.domElement.addEventListener('dblclick', this.rendererDoubleclick.bind(this));
                 window.addEventListener('keydown', this.rendererKeydown.bind(this));
                 this.rendererResize();
 
@@ -188,8 +188,8 @@ function ObjectEditor(data) {
 
                 // Grid
                 const gridSize = Math.max(this.object.width, this.object.depth);
-                var grid = new THREE.GridHelper(gridSize, gridSize);
-                grid.position.y = -.01;
+                const grid = new THREE.GridHelper(gridSize, gridSize);
+                grid.position.y = -0.02;
                 scene.add(grid);
             },
 
@@ -202,18 +202,33 @@ function ObjectEditor(data) {
                 stats.dom.style.bottom = (16 + document.getElementById('objects-selector').offsetHeight) + 'px';
             },
 
-            rendererMouseup(event) {
+            sendRaycaster(children, x, y) {
                 const top = document.querySelector('.navbar').offsetHeight;
                 const height = window.innerHeight - top - document.getElementById('objects-selector').offsetHeight;
                 const mouse = new THREE.Vector2();
-                mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-                mouse.y = - ((event.clientY - top) / height) * 2 + 1;
+                mouse.x = (x / window.innerWidth) * 2 - 1;
+                mouse.y = - ((y - top) / height) * 2 + 1;
 
                 const raycaster = new THREE.Raycaster();
                 raycaster.setFromCamera(mouse, camera);
-                const intersects = raycaster.intersectObjects(meshes.children);
+                return intersects = raycaster.intersectObjects(children);
+            },
+
+            rendererMouseup(event) {
+                const intersects = this.sendRaycaster(meshes.children, event.clientX, event.clientY);
                 if (intersects.length > 0) {
                     this.selectObjectId(intersects[0].object.userData.pivot.id);
+                }
+            },
+
+            rendererDoubleclick(event) {
+                if (this.selectObjectId != null) {
+                    const intersects = this.sendRaycaster(scene.children, event.clientX, event.clientY);
+                    if (intersects.length > 0) {
+                        const point = intersects[0].point;
+                        this.selectedObject.position_x = point.x;
+                        this.selectedObject.position_z = point.z;
+                    }
                 }
             },
 
@@ -240,6 +255,8 @@ function ObjectEditor(data) {
                         if (key == 'q') this.selectedObject.rotation_y = parseFloat(this.selectedObject.rotation_y) - rotationStep;
                         if (key == 'e') this.selectedObject.rotation_y = parseFloat(this.selectedObject.rotation_y) + rotationStep;
                     }
+
+                    if (key == 'c') this.addObject(object);
                 }
             },
 
@@ -250,10 +267,10 @@ function ObjectEditor(data) {
 
                 // Rotate sprites
                 for (const sprite of sprites) {
-                    var position = new THREE.Vector3();
+                    const position = new THREE.Vector3();
                     position.setFromMatrixPosition(sprite.matrixWorld);
                     sprite.rotation.y = Math.atan2((camera.position.x - position.x), (camera.position.z - position.z));
-                    if (wireframe != undefined && editor.selectedObjectId == sprite.userData.pivot.id) {
+                    if (editor.selectedObjectId == sprite.userData.pivot.id) {
                         wireframe.rotation.set(sprite.rotation.x, sprite.rotation.y, sprite.rotation.z);
                     }
                 }
@@ -305,11 +322,20 @@ function ObjectEditor(data) {
             },
 
             addObject(object) {
-                const newObject = { ...object, pivot: {
-                    id: Date.now(), name: object.name,
-                    position_x: 0, position_y: 0, position_z: 0,
-                    rotation_x: 0, rotation_y: 0, rotation_z: 0
-                }};
+                const newObject = JSON.parse(JSON.stringify(object));
+                if (newObject.pivot == undefined) {
+                    const selectedObject = this.object.objects.find(object => object.pivot.id == this.selectedObjectId);
+                    newObject.pivot = {
+                        name: object.name,
+                        position_x: selectedObject != undefined ? selectedObject.pivot.position_x : 0,
+                        position_y: selectedObject != undefined ? selectedObject.pivot.position_y : 0,
+                        position_z: selectedObject != undefined ? selectedObject.pivot.position_z : 0,
+                        rotation_x: selectedObject != undefined ? selectedObject.pivot.rotation_x : 0,
+                        rotation_y: selectedObject != undefined ? selectedObject.pivot.rotation_y : 0,
+                        rotation_z: selectedObject != undefined ? selectedObject.pivot.rotation_z : 0
+                    };
+                }
+                newObject.pivot.id = Date.now();
                 this.object.objects.push(newObject);
                 this.selectObjectId(newObject.pivot.id);
             },

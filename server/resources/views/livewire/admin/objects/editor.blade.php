@@ -16,10 +16,10 @@
                     <p class="menu-label">@lang('admin/objects.editor.objects')</p>
                     <ul class="menu-list">
                         <li v-for="object in object.objects" :key="object.pivot.id">
-                            <a :class="{'is-active': object.pivot.id == selectedObjectId}"
+                            <a :class="{'is-active': object.pivot.id == selectedObjectId}" style="display: flex;"
                                 @click.prevent="selectObjectId(object.pivot.id)">
-                                @{{ object.pivot.name }} (@{{ object.name }})
-                                <button class="delete is-pulled-right ml-3" @click.prevent="deleteObject(object.pivot.id)"></button>
+                                <span style="flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">@{{ object.pivot.name }} (@{{ object.name }})</span>
+                                <button class="delete ml-3" @click.prevent="deleteObject(object.pivot.id)"></button>
                             </a>
                         </li>
                     </ul>

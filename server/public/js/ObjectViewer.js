@@ -3,8 +3,8 @@ function ObjectViewer(data) {
     scene.background = new THREE.Color(data.backgroundColor);
 
     const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
-    camera.position.y = data.object.height / 2;
-    camera.position.z = data.object.depth + Math.max(data.object.width, data.object.height, data.object.depth);
+    camera.position.y = data.object.type == data.OBJECT_TYPE_GROUP ? data.object.height : data.object.height / 2;
+    camera.position.z = data.object.depth + Math.max(data.object.width, data.object.height, data.object.depth) / (data.object.type == data.OBJECT_TYPE_GROUP ? 2 : 1);
 
     const renderer = new THREE.WebGLRenderer({ canvas: data.canvas });
     function resize() {
@@ -68,7 +68,6 @@ function ObjectViewer(data) {
         }
         if (object.type == data.OBJECT_TYPE_PYRAMID) {
             mesh = new THREE.Mesh(new THREE.CylinderGeometry(0, Math.min(object.width, object.depth), object.height, 4), createMaterial(object.texture));
-            mesh.rotation.y = Math.PI / 4;
         }
         return mesh;
     }
@@ -83,7 +82,7 @@ function ObjectViewer(data) {
         function loop() {
             window.requestAnimationFrame(loop);
             const delta = clock.getDelta();
-            if (data.object.type != data.OBJECT_TYPE_SPRITE && data.object.type != data.OBJECT_TYPE_FIXED_SPRITE) {
+            if (data.object.type != data.OBJECT_TYPE_GROUP && data.object.type != data.OBJECT_TYPE_SPRITE && data.object.type != data.OBJECT_TYPE_FIXED_SPRITE) {
                 mesh.rotation.x += 0.5 * delta;
             }
             mesh.rotation.y += 1 * delta;

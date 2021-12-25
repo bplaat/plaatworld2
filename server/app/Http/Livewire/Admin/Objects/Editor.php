@@ -14,9 +14,9 @@ class Editor extends Component
     public $object;
 
     public function mount(GameObject $object) {
-        // When object is no a group redirect back to objects page
+        // When object is no a group show 404 page
         if ($object->type != GameObject::TYPE_GROUP) {
-            return redirect(route('admin.objects.crud'));
+            abort(404);
         }
 
         // Get or create object editor user data model
