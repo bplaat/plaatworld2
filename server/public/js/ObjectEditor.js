@@ -6,6 +6,7 @@ function ObjectEditor(data) {
         stats, scene, clock, camera, sprites = [], wireframe;
     const meshes = new THREE.Group();
 
+    const planeGeometry = new THREE.PlaneGeometry(1, 1);
     const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
     const cylinderGeometry = new THREE.CylinderGeometry(1, 1, 1, 32);
     const sphereGeometry = new THREE.SphereGeometry(1, 32, 16);
@@ -27,8 +28,8 @@ function ObjectEditor(data) {
     function createMesh(object) {
         let mesh;
         if (object.type == data.OBJECT_TYPE_SPRITE || object.type == data.OBJECT_TYPE_FIXED_SPRITE) {
-            mesh = new THREE.Mesh(boxGeometry, createMaterial(object.texture_id));
-            mesh.scale.set(object.width, object.height, 0.001);
+            mesh = new THREE.Mesh(planeGeometry, createMaterial(object.texture_id));
+            mesh.scale.set(object.width, object.height, 1);
             if (object.type == data.OBJECT_TYPE_SPRITE) {
                 sprites.push(mesh);
             }
@@ -69,9 +70,9 @@ function ObjectEditor(data) {
         mounted() {
             data.livewire.on('updateObjectIds', this.updateObjectIds.bind(this));
             this.initRenderer();
+            this.createObjects();
             clock = new THREE.Clock();
             this.renderLoop();
-            this.syncObjects();
             if (data.editorUser.selected_object_id != null) {
                 this.selectObjectId(data.editorUser.selected_object_id);
             }
@@ -79,10 +80,6 @@ function ObjectEditor(data) {
         },
 
         watch: {
-            'object.objects': function () {
-                this.syncObjects();
-            },
-
             selectedObjectId() {
                 const object = this.object.objects.find(object => object.pivot.id == this.selectedObjectId);
                 const mesh = meshes.children.find(mesh => mesh.userData.pivot.id == this.selectedObjectId);
@@ -264,11 +261,12 @@ function ObjectEditor(data) {
             },
 
             rendererDoubleclick(event) {
-                if (this.selectObjectId != null) {
+                if (this.selectedObjectId != null) {
                     const intersects = this.sendRaycaster(scene.children, event.clientX, event.clientY);
                     if (intersects.length > 0) {
                         const point = intersects[0].point;
                         this.selectedObject.position_x = point.x;
+                        this.selectedObject.position_y = point.y;
                         this.selectedObject.position_z = point.z;
                     }
                 }
@@ -320,7 +318,10 @@ function ObjectEditor(data) {
                     }
 
                     // Object create and delete
-                    if (keys['c']) this.addObject(object);
+                    if (keys['c']) {
+                        keys['c'] = false;
+                        this.addObject(object);
+                    }
                     if (keys['backspace'] || keys['delete']) this.deleteObject(object.pivot.id);
                 }
 
@@ -349,9 +350,7 @@ function ObjectEditor(data) {
                 if ('Stats' in window) stats.end();
             },
 
-            syncObjects() {
-                meshes.clear();
-                sprites = [];
+            createObjects() {
                 for (const object of this.object.objects) {
                     const mesh = createMesh(object);
                     mesh.userData = object;
@@ -389,6 +388,9 @@ function ObjectEditor(data) {
                     }
                     return object;
                 });
+                if (this.selectedObjectId in objectIds) {
+                    this.selectedObjectId = objectIds[this.selectedObjectId];
+                }
             },
 
             addObject(object) {
@@ -408,12 +410,30 @@ function ObjectEditor(data) {
                 newObject.pivot.id = Date.now();
                 this.object.objects.push(newObject);
                 this.selectObjectId(newObject.pivot.id);
+
+                // Create mesh
+                const mesh = createMesh(newObject);
+                mesh.userData = newObject;
+                mesh.position.set(newObject.pivot.position_x, newObject.pivot.position_y + (newObject.type == data.OBJECT_TYPE_SPHERE ? newObject.height : newObject.height / 2), newObject.pivot.position_z);
+                mesh.rotation.set(newObject.pivot.rotation_x, newObject.pivot.rotation_y, newObject.pivot.rotation_z);
+                meshes.add(mesh);
             },
 
             deleteObject(objectId) {
                 this.object.objects = this.object.objects.filter(object => object.pivot.id != objectId);
                 if (this.selectedObjectId == objectId) {
                     this.selectedObjectId = null;
+                }
+
+                // Delete mesh
+                for (const mesh of meshes.children) {
+                    if (mesh.userData.pivot.id == objectId) {
+                        if (mesh.userData.type == data.OBJECT_TYPE_SPRITE) {
+                            sprites.splice(sprites.indexOf(mesh), 1);
+                        }
+                        mesh.removeFromParent();
+                        break;
+                    }
                 }
             },
 

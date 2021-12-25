@@ -6,6 +6,7 @@ function WorldEditor(data) {
         skyboxBackground, editorBackground, clock, camera, sprites = [], wireframe;
     const meshes = new THREE.Group();
 
+    const planeGeometry = new THREE.PlaneGeometry(1, 1);
     const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
     const cylinderGeometry = new THREE.CylinderGeometry(1, 1, 1, 32);
     const sphereGeometry = new THREE.SphereGeometry(1, 32, 16);
@@ -36,8 +37,8 @@ function WorldEditor(data) {
             }
         }
         if (object.type == data.OBJECT_TYPE_SPRITE || object.type == data.OBJECT_TYPE_FIXED_SPRITE) {
-            mesh = new THREE.Mesh(boxGeometry, createMaterial(object.texture_id));
-            mesh.scale.set(object.width, object.height, 0.001);
+            mesh = new THREE.Mesh(planeGeometry, createMaterial(object.texture_id));
+            mesh.scale.set(object.width, object.height, 1);
             if (object.type == data.OBJECT_TYPE_SPRITE) {
                 sprites.push(mesh);
             }
@@ -79,9 +80,9 @@ function WorldEditor(data) {
         mounted() {
             data.livewire.on('updateObjectIds', this.updateObjectIds.bind(this));
             this.initRenderer();
+            this.createObjects();
             clock = new THREE.Clock();
             this.renderLoop();
-            this.syncObjects();
             if (data.editorUser.selected_object_id != null) {
                 this.selectObjectId(data.editorUser.selected_object_id);
             }
@@ -91,10 +92,6 @@ function WorldEditor(data) {
         watch: {
             'skybox': function (skybox) {
                 scene.background = skybox ? skyboxBackground : editorBackground;
-            },
-
-            'world.objects': function () {
-                this.syncObjects();
             },
 
             selectedObjectId() {
@@ -223,10 +220,9 @@ function WorldEditor(data) {
                 groundMaterial.map.repeat.set(data.world.width / 5, data.world.height / 5);
                 groundMaterial.map.wrapS = THREE.RepeatWrapping;
                 groundMaterial.map.wrapT = THREE.RepeatWrapping;
-                const ground = new THREE.Mesh(boxGeometry, groundMaterial);
+                const ground = new THREE.Mesh(planeGeometry, groundMaterial);
                 ground.scale.x = data.world.width;
                 ground.scale.y = data.world.height;
-                ground.scale.z = 0.001;
                 ground.rotation.x = -Math.PI / 2;
                 ground.position.y = -0.01;
                 scene.add(ground);
@@ -306,11 +302,12 @@ function WorldEditor(data) {
             },
 
             rendererDoubleclick(event) {
-                if (this.selectObjectId != null) {
+                if (this.selectedObjectId != null) {
                     const intersects = this.sendRaycaster(scene.children, event.clientX, event.clientY);
                     if (intersects.length > 0) {
                         const point = intersects[0].point;
                         this.selectedObject.position_x = point.x;
+                        this.selectedObject.position_y = point.y;
                         this.selectedObject.position_z = point.z;
                     }
                 }
@@ -362,7 +359,10 @@ function WorldEditor(data) {
                     }
 
                     // Object create and delete
-                    if (keys['c']) this.addObject(object);
+                    if (keys['c']) {
+                        keys['c'] = false;
+                        this.addObject(object);
+                    }
                     if (keys['backspace'] || keys['delete']) this.deleteObject(object.pivot.id);
                 }
 
@@ -379,9 +379,10 @@ function WorldEditor(data) {
 
                 // Rotate sprites
                 for (const sprite of sprites) {
-                    const position = new THREE.Vector3();
-                    position.setFromMatrixPosition(sprite.matrixWorld);
-                    sprite.rotation.y = Math.atan2((camera.position.x - position.x), (camera.position.z - position.z));
+                    const spritePosition = sprite.position.clone();
+                    if (!('pivot' in sprite.userData)) sprite.parent.localToWorld(spritePosition);
+                    sprite.rotation.y = Math.atan2((camera.position.x - spritePosition.x), (camera.position.z - spritePosition.z)) -
+                        (!('pivot' in sprite.userData) ? sprite.parent.rotation.y : 0);
                     if ('pivot' in sprite.userData && this.selectedObjectId == sprite.userData.pivot.id) {
                         wireframe.rotation.set(sprite.rotation.x, sprite.rotation.y, sprite.rotation.z);
                     }
@@ -391,9 +392,7 @@ function WorldEditor(data) {
                 if ('Stats' in window) stats.end();
             },
 
-            syncObjects() {
-                meshes.clear();
-                sprites = [];
+            createObjects() {
                 for (const object of this.world.objects) {
                     const mesh = createMesh(object);
                     mesh.userData = object;
@@ -431,6 +430,9 @@ function WorldEditor(data) {
                     }
                     return object;
                 });
+                if (this.selectedObjectId in objectIds) {
+                    this.selectedObjectId = objectIds[this.selectedObjectId];
+                }
             },
 
             addObject(object) {
@@ -450,12 +452,30 @@ function WorldEditor(data) {
                 newObject.pivot.id = Date.now();
                 this.world.objects.push(newObject);
                 this.selectObjectId(newObject.pivot.id);
+
+                // Create mesh
+                const mesh = createMesh(newObject);
+                mesh.userData = newObject;
+                mesh.position.set(newObject.pivot.position_x, newObject.pivot.position_y + (newObject.type == data.OBJECT_TYPE_SPHERE ? newObject.height : newObject.height / 2), newObject.pivot.position_z);
+                mesh.rotation.set(newObject.pivot.rotation_x, newObject.pivot.rotation_y, newObject.pivot.rotation_z);
+                meshes.add(mesh);
             },
 
             deleteObject(objectId) {
                 this.world.objects = this.world.objects.filter(object => object.pivot.id != objectId);
                 if (this.selectedObjectId == objectId) {
                     this.selectedObjectId = null;
+                }
+
+                // Delete mesh
+                for (const mesh of meshes.children) {
+                    if (mesh.userData.pivot.id == objectId) {
+                        if (mesh.userData.type == data.OBJECT_TYPE_SPRITE) {
+                            sprites.splice(sprites.indexOf(mesh), 1);
+                        }
+                        mesh.removeFromParent();
+                        break;
+                    }
                 }
             },
 
