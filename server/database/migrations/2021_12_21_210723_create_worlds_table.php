@@ -24,9 +24,14 @@ class CreateWorldsTable extends Migration
             $table->double('spawn_rotation_x');
             $table->double('spawn_rotation_y');
             $table->double('spawn_rotation_z');
+            $table->unsignedBigInteger('sky_texture_id')->nullable();
             $table->boolean('active');
             $table->timestamps();
             $table->softDeletes();
+
+            $table->foreign('sky_texture_id')
+                ->references('id')
+                ->on('textures');
         });
     }
 

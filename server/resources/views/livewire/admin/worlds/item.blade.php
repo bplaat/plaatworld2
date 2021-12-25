@@ -130,6 +130,8 @@
                         </div>
                     </div>
 
+                    <livewire:components.texture-chooser name="item_texture" :textureId="$world->sky_texture_id" includeInactive="true" />
+
                     <div class="field">
                         <label class="label" for="active">@lang('admin/worlds.item.active')</label>
                         <label class="checkbox" for="active">

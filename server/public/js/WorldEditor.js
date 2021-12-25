@@ -2,7 +2,7 @@ const degrees = rad => rad * 180 / Math.PI;
 const radians = deg => (deg * Math.PI) / 180;
 
 function WorldEditor(data) {
-    let renderer, controls, stats, scene, camera, sprites = [], wireframe;
+    let renderer, controls, stats, scene, camera, spawn, sprites = [], wireframe;
     const meshes = new THREE.Group();
 
     const planeGeometry = new THREE.PlaneGeometry(1, 1);
@@ -209,6 +209,13 @@ function WorldEditor(data) {
                 ground.rotation.x = -Math.PI / 2;
                 ground.position.y = -0.01;
                 scene.add(ground);
+
+                // Spawn
+                const spawn = new THREE.Mesh(boxGeometry, new THREE.MeshNormalMaterial());
+                spawn.position.set(data.world.spawn_position_x, data.world.spawn_position_y + 1.5, data.world.spawn_position_z);
+                spawn.rotation.set(data.world.spawn_rotation_x, data.world.spawn_rotation_y, data.world.spawn_rotation_z);
+                spawn.scale.set(0.5, 0.5, 0.5);
+                scene.add(spawn);
             },
 
             rendererResize() {
@@ -279,6 +286,7 @@ function WorldEditor(data) {
                     }
 
                     if (key == 'c') this.addObject(object);
+                    if (key == 'backspace' || key == 'delete') this.deleteObject(object.pivot.id);
                 }
             },
 

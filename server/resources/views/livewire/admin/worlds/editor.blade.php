@@ -18,7 +18,7 @@
                         <li v-for="object in world.objects" :key="object.pivot.id">
                             <a :class="{'is-active': object.pivot.id == selectedObjectId}" style="display: flex;"
                                 @click.prevent="selectObjectId(object.pivot.id)">
-                                <span style="flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">@{{ object.pivot.name }} (@{{ object.name }} @{{ object.pivot.id }})</span>
+                                <span style="flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">@{{ object.pivot.name }} (@{{ object.name }})</span>
                                 <button class="delete ml-3" @click.prevent="deleteObject(object.pivot.id)"></button>
                             </a>
                         </li>

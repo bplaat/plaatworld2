@@ -141,6 +141,8 @@
                             </div>
                         </div>
                     </div>
+
+                    <livewire:components.texture-chooser name="texture" includeInactive="true" />
                 </div>
 
                 <div class="modal-card-foot">

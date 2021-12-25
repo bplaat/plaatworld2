@@ -21,8 +21,18 @@ class Item extends Component
         'world.spawn_rotation_x' => 'required|numeric|min:0',
         'world.spawn_rotation_y' => 'required|numeric|min:0',
         'world.spawn_rotation_z' => 'required|numeric|min:0',
+        'world.sky_texture_id' => 'nullable|integer|exists:textures,id',
         'world.active' => 'nullable|boolean'
     ];
+
+    public $listeners = ['inputValue'];
+
+    public function inputValue($name, $value)
+    {
+        if ($name == 'item_texture') {
+            $this->world->sky_texture_id = $value;
+        }
+    }
 
     public function editWorld()
     {

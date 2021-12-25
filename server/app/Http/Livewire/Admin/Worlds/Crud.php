@@ -19,8 +19,14 @@ class Crud extends PaginationComponent
         'world.spawn_position_z' => 'required|numeric|min:0',
         'world.spawn_rotation_x' => 'required|numeric|min:0',
         'world.spawn_rotation_y' => 'required|numeric|min:0',
-        'world.spawn_rotation_z' => 'required|numeric|min:0'
+        'world.spawn_rotation_z' => 'required|numeric|min:0',
+        'world.sky_texture_id' => 'nullable|integer|exists:textures,id'
     ];
+
+    public function __construct() {
+        parent::__construct();
+        $this->listeners[] = 'inputValue';
+    }
 
     public function mount()
     {
@@ -30,6 +36,13 @@ class Crud extends PaginationComponent
 
         $this->world = new World();
         $this->isCreating = false;
+    }
+
+    public function inputValue($name, $value)
+    {
+        if ($name == 'texture') {
+            $this->world->sky_texture_id = $value;
+        }
     }
 
     public function createWorld()

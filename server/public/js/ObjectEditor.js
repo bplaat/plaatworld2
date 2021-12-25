@@ -259,6 +259,7 @@ function ObjectEditor(data) {
                     }
 
                     if (key == 'c') this.addObject(object);
+                    if (key == 'backspace' || key == 'delete') this.deleteObject(object.pivot.id);
                 }
             },
 
