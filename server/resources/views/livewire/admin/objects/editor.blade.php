@@ -3,7 +3,7 @@
 
     <div id="object-editor" v-cloak>
         <div class="m-3" style="position:absolute;top:0;left:0">
-            <div class="p-3 mb-3 has-background-light" style="width:16rem;height:6.5rem;border-radius:3px;">
+            <div class="p-3 mb-3 has-background-light" style="min-width:16rem;height:6.5rem;border-radius:3px;">
                 <h1 class="title is-5 mb-3">@lang('admin/objects.editor.header') - {{ $object->name }}</h1>
                 <div class="buttons mt-3 mb-0">
                     <button class="button is-link" @click="saveObject()">@{{ saved ? @json(__('admin/objects.editor.saved')) : @json(__('admin/objects.editor.save')) }}</button>
@@ -14,7 +14,7 @@
             <div class="p-3 has-background-light" style="min-width:16rem;max-height:calc(100vh - 23rem);overflow-y:auto;border-radius:3px;">
                 <div class="menu">
                     <p class="menu-label">@lang('admin/objects.editor.objects')</p>
-                    <ul class="menu-list">
+                    <ul v-if="object.objects.length > 0" class="menu-list">
                         <li v-for="object in object.objects" :key="object.pivot.id">
                             <a :class="{'is-active': object.pivot.id == selectedObjectId}" style="display: flex;"
                                 @click.prevent="selectObjectId(object.pivot.id)">
@@ -23,6 +23,7 @@
                             </a>
                         </li>
                     </ul>
+                    <p v-else><i>@lang('admin/objects.editor.objects_empty')</i></p>
                 </div>
             </div>
         </div>
@@ -73,7 +74,7 @@
                     <input class="input is-small" type="number" step="0.001" id="rotation_x" v-model="selectedObject.rotation_x">
                 </div>
             </div>
-            <div class="field">
+            <div class="field" v-if="selectedObject.type != {{ App\Models\GameObject::TYPE_SPRITE }}">
                 <label class="label is-small" for="rotation_y">@lang('admin/objects.editor.rotation_y')</label>
                 <div class="control">
                     <input class="input is-small" type="number" step="0.001" id="rotation_y" v-model="selectedObject.rotation_y">

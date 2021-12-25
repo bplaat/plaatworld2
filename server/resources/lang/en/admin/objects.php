@@ -56,6 +56,7 @@ return [
     'editor.saved' => 'Saved!',
     'editor.exit' => 'Exit',
     'editor.objects' => 'Objects',
+    'editor.objects_empty' => 'No child objects found!',
     'editor.name' => 'Name',
     'editor.position' => 'Position',
     'editor.position_x' => 'Position X (m)',

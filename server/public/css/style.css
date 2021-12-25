@@ -1,6 +1,6 @@
 [v-cloak]{display:none}
-.is-immersive{overflow:hidden}
 .logo{width:1.5rem;height:1.5rem;margin-right:0.75rem}
+.is-immersive{overflow:hidden}
 .immersive{position:relative;height:calc(100vh - 3.25rem)}
 
 .column>.box:not(.not-fullheight){height:100%}

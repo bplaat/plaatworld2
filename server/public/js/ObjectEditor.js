@@ -1,5 +1,5 @@
 const degrees = rad => rad * 180 / Math.PI;
-const radians = deg => (deg * Math.PI) / 180.0;
+const radians = deg => (deg * Math.PI) / 180;
 
 function ObjectEditor(data) {
     let renderer, controls, stats, scene, camera, sprites = [], wireframe;
@@ -60,7 +60,7 @@ function ObjectEditor(data) {
             object: data.object,
             selectedObjectId: null,
             selectedObject: {
-                stopWatching: false, name: '',
+                stopWatching: false, type: 0, name: '',
                 position_x: 0, position_y: 0, position_z: 0,
                 rotation_x: 0, rotation_y: 0, rotation_z: 0
             }
@@ -83,12 +83,13 @@ function ObjectEditor(data) {
             },
 
             selectedObjectId() {
+                const object = this.object.objects.find(object => object.pivot.id == this.selectedObjectId);
                 const mesh = meshes.children.find(mesh => mesh.userData.pivot.id == this.selectedObjectId);
                 if (wireframe != undefined) wireframe.removeFromParent();
                 if (mesh != null) {
                     wireframe = new THREE.LineSegments(new THREE.EdgesGeometry(mesh.geometry), wireframeMaterial);
                     wireframe.position.set(mesh.position.x, mesh.position.y, mesh.position.z);
-                    wireframe.scale.set(mesh.scale.x * 1.1, mesh.scale.y * 1.1, mesh.scale.z * 1.1);
+                    wireframe.scale.set(object.width * 1.1, object.height * 1.1, object.depth * 1.1);
                     wireframe.rotation.set(mesh.rotation.x, mesh.rotation.y, mesh.rotation.z);
                     scene.add(wireframe);
                 }
@@ -112,7 +113,7 @@ function ObjectEditor(data) {
                 const object = this.object.objects.find(object => object.pivot.id == this.selectedObjectId);
                 object.pivot.position_y = position_y;
                 const mesh = meshes.children.find(mesh => mesh.userData.pivot.id == this.selectedObjectId);
-                mesh.position.y = parseFloat(position_y) + object.height / 2;
+                mesh.position.y = parseFloat(position_y) + (object.type == data.OBJECT_TYPE_SPHERE ? object.height : object.height / 2);
                 wireframe.position.y = mesh.position.y;
             },
             'selectedObject.position_z': function (position_z) {
@@ -136,6 +137,7 @@ function ObjectEditor(data) {
                 if (this.stopWatching) return;
                 const real_rotation_y = radians(rotation_y);
                 const object = this.object.objects.find(object => object.pivot.id == this.selectedObjectId);
+                if (object.type == data.OBJECT_TYPE_SPRITE) return;
                 object.pivot.rotation_y = real_rotation_y;
                 const mesh = meshes.children.find(mesh => mesh.userData.pivot.id == this.selectedObjectId);
                 mesh.rotation.y = real_rotation_y;
@@ -189,7 +191,7 @@ function ObjectEditor(data) {
                 // Grid
                 const gridSize = Math.max(this.object.width, this.object.depth);
                 const grid = new THREE.GridHelper(gridSize, gridSize);
-                grid.position.y = -0.02;
+                grid.position.y = -0.01;
                 scene.add(grid);
             },
 
@@ -216,7 +218,7 @@ function ObjectEditor(data) {
 
             rendererMouseup(event) {
                 const intersects = this.sendRaycaster(meshes.children, event.clientX, event.clientY);
-                if (intersects.length > 0) {
+                if (intersects.length > 0 && 'pivot' in intersects[0].object.userData) {
                     this.selectObjectId(intersects[0].object.userData.pivot.id);
                 }
             },
@@ -270,7 +272,7 @@ function ObjectEditor(data) {
                     const position = new THREE.Vector3();
                     position.setFromMatrixPosition(sprite.matrixWorld);
                     sprite.rotation.y = Math.atan2((camera.position.x - position.x), (camera.position.z - position.z));
-                    if (editor.selectedObjectId == sprite.userData.pivot.id) {
+                    if ('pivot' in sprite.userData && editor.selectedObjectId == sprite.userData.pivot.id) {
                         wireframe.rotation.set(sprite.rotation.x, sprite.rotation.y, sprite.rotation.z);
                     }
                 }
@@ -285,7 +287,7 @@ function ObjectEditor(data) {
                 for (const object of this.object.objects) {
                     const mesh = createMesh(object);
                     mesh.userData = object;
-                    mesh.position.set(object.pivot.position_x, object.pivot.position_y + object.height / 2, object.pivot.position_z);
+                    mesh.position.set(object.pivot.position_x, object.pivot.position_y + (object.type == data.OBJECT_TYPE_SPHERE ? object.height : object.height / 2), object.pivot.position_z);
                     mesh.rotation.set(object.pivot.rotation_x, object.pivot.rotation_y, object.pivot.rotation_z);
                     meshes.add(mesh);
                 }
@@ -352,6 +354,7 @@ function ObjectEditor(data) {
                 if (object != null) {
                     this.selectedObjectId = objectId;
                     this.stopWatching = true;
+                    this.selectedObject.type = object.type;
                     this.selectedObject.name = object.pivot.name;
                     this.selectedObject.position_x = object.pivot.position_x;
                     this.selectedObject.position_y = object.pivot.position_y;

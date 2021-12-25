@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\Degrees;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -29,9 +30,9 @@ class World extends Model
         'spawn_position_x' => 'double',
         'spawn_position_y' => 'double',
         'spawn_position_z' => 'double',
-        'spawn_rotation_x' => 'double',
-        'spawn_rotation_y' => 'double',
-        'spawn_rotation_z' => 'double',
+        'spawn_rotation_x' => Degrees::class,
+        'spawn_rotation_y' => Degrees::class,
+        'spawn_rotation_z' => Degrees::class,
         'active' => 'boolean'
     ];
 

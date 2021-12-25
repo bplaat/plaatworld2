@@ -6,6 +6,10 @@
             </div>
 
             <div class="card-image-tags">
+                @if ($object->type == App\Models\GameObject::TYPE_GROUP)
+                    <span class="tag">{{ Str::upper(__('admin/objects.item.type_group')) }}</span>
+                @endif
+
                 @if (!$object->active)
                     <span class="tag is-warning">{{ Str::upper(__('admin/objects.item.inactive')) }}</span>
                 @endif

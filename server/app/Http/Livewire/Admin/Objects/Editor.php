@@ -81,9 +81,6 @@ class Editor extends Component
             $objectPivot->save();
             $newObjectIds[$object['pivot']['id']] = $objectPivot->id;
         }
-        if (count($newObjectIds) > 0) {
-            $this->emit('updateObjectIds', $newObjectIds);
-        }
 
         // Update editor user
         $this->editorUser->camera_position_x = $data['editorUser']['camera_position_x'];
@@ -95,13 +92,16 @@ class Editor extends Component
         $selected_object_id = $data['editorUser']['selected_object_id'];
         $this->editorUser->selected_object_id = isset($newObjectIds[$selected_object_id]) ? $newObjectIds[$selected_object_id] : $selected_object_id;
         $this->editorUser->save();
+
+        // Emit new object ids message to JavaScript editor
+        if (count($newObjectIds) > 0) {
+            $this->emit('updateObjectIds', $newObjectIds);
+        }
     }
 
     public function render()
     {
-        return view('livewire.admin.objects.editor', [
-            'object' => $this->object
-        ])->layout('layouts.app', [
+        return view('livewire.admin.objects.editor')->layout('layouts.app', [
             'title' => __('admin/objects.editor.title', ['object.name' => $this->object->name]),
             'immersive' => true, 'vuejs' => true, 'threejs' => true, 'statsjs' => true, 'orbitcontrolsjs' => true
         ]);

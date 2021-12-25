@@ -4,6 +4,10 @@
             <div class="image is-square" style="background-image: url(/storage/textures/{{ $texture->image ?? 'default.png' }});"></div>
 
             <div class="card-image-tags">
+                @if ($texture->transparent)
+                    <span class="tag">{{ Str::upper(__('admin/textures.item.transparent')) }}</span>
+                @endif
+
                 @if (!$texture->active)
                     <span class="tag is-warning">{{ Str::upper(__('admin/textures.item.inactive')) }}</span>
                 @endif
