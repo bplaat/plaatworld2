@@ -23,6 +23,8 @@ return [
     'crud.width' => 'Width (m)',
     'crud.height' => 'Height (m)',
     'crud.depth' => 'Depth (m)',
+    'crud.active' => 'Active',
+    'crud.active_object' => 'Make object visible in the system',
     'crud.cancel' => 'Cancel',
 
     // Admin objects item livewire component

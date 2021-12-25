@@ -102,6 +102,14 @@
                     </div>
 
                     <livewire:components.texture-chooser name="texture" includeInactive="true" />
+
+                    <div class="field">
+                        <label class="label" for="active">@lang('admin/objects.crud.active')</label>
+                        <label class="checkbox" for="active">
+                            <input type="checkbox" id="active" wire:model.defer="object.active">
+                            @lang('admin/objects.crud.active_object')
+                        </label>
+                    </div>
                 </div>
 
                 <div class="modal-card-foot">

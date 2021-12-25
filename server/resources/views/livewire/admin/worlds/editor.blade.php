@@ -7,6 +7,9 @@
                 <h1 class="title is-5 mb-3">@lang('admin/worlds.editor.header') - {{ $world->name }}</h1>
                 <div class="buttons mt-3 mb-0">
                     <button class="button is-link" @click="saveWorld()">@{{ saved ? @json(__('admin/worlds.editor.saved')) : @json(__('admin/worlds.editor.save')) }}</button>
+                    @if ($world->sky_texture_id != null)
+                        <button class="button" @click="skybox = !skybox">@{{ skybox ? @json(__('admin/worlds.editor.skybox_hide')) : @json(__('admin/worlds.editor.skybox_show')) }}</button>
+                    @endif
                     <a class="button is-danger" href="{{ route('admin.worlds.crud') }}">@lang('admin/worlds.editor.exit')</a>
                 </div>
             </div>

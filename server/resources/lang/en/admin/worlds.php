@@ -48,6 +48,8 @@ return [
     'editor.header' => 'World Editor',
     'editor.save' => 'Save',
     'editor.saved' => 'Saved!',
+    'editor.skybox_show' => 'Show skybox',
+    'editor.skybox_hide' => 'Hide skybox',
     'editor.exit' => 'Exit',
     'editor.objects' => 'Objects',
     'editor.objects_empty' => 'No child objects found!',

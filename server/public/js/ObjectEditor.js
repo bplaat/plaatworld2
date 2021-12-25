@@ -5,7 +5,6 @@ function ObjectEditor(data) {
     let renderer, controls, stats, scene, camera, sprites = [], wireframe;
     const meshes = new THREE.Group();
 
-    const planeGeometry = new THREE.PlaneGeometry(1, 1);
     const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
     const cylinderGeometry = new THREE.CylinderGeometry(1, 1, 1, 32);
     const sphereGeometry = new THREE.SphereGeometry(1, 32, 16);
@@ -27,8 +26,8 @@ function ObjectEditor(data) {
     function createMesh(object) {
         let mesh;
         if (object.type == data.OBJECT_TYPE_SPRITE || object.type == data.OBJECT_TYPE_FIXED_SPRITE) {
-            mesh = new THREE.Mesh(planeGeometry, createMaterial(object.texture_id));
-            mesh.scale.set(object.width, object.height, 0);
+            mesh = new THREE.Mesh(boxGeometry, createMaterial(object.texture_id));
+            mesh.scale.set(object.width, object.height, 0.001);
             if (object.type == data.OBJECT_TYPE_SPRITE) {
                 sprites.push(mesh);
             }
@@ -273,7 +272,7 @@ function ObjectEditor(data) {
                     const position = new THREE.Vector3();
                     position.setFromMatrixPosition(sprite.matrixWorld);
                     sprite.rotation.y = Math.atan2((camera.position.x - position.x), (camera.position.z - position.z));
-                    if ('pivot' in sprite.userData && editor.selectedObjectId == sprite.userData.pivot.id) {
+                    if ('pivot' in sprite.userData && this.selectedObjectId == sprite.userData.pivot.id) {
                         wireframe.rotation.set(sprite.rotation.x, sprite.rotation.y, sprite.rotation.z);
                     }
                 }
@@ -377,7 +376,7 @@ function ObjectEditor(data) {
                 data.editorUser.camera_rotation_x = camera.rotation.x;
                 data.editorUser.camera_rotation_y = camera.rotation.y;
                 data.editorUser.camera_rotation_z = camera.rotation.z;
-                data.editorUser.selected_object_id = editor.selectedObjectId;
+                data.editorUser.selected_object_id = this.selectedObjectId;
 
                 // Send save object message
                 data.livewire.saveObject({ editorUser: data.editorUser, object: this.object });

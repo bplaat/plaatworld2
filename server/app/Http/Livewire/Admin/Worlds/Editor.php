@@ -28,6 +28,7 @@ class Editor extends Component
             $this->editorUser->camera_rotation_x = 0;
             $this->editorUser->camera_rotation_y = 0;
             $this->editorUser->camera_rotation_z = 0;
+            $this->editorUser->skybox = false;
             $this->editorUser->save();
         }
 
@@ -104,6 +105,7 @@ class Editor extends Component
         $this->editorUser->camera_rotation_z = $data['editorUser']['camera_rotation_z'];
         $selected_object_id = $data['editorUser']['selected_object_id'];
         $this->editorUser->selected_object_id = isset($newObjectIds[$selected_object_id]) ? $newObjectIds[$selected_object_id] : $selected_object_id;
+        $this->editorUser->skybox = $data['editorUser']['skybox'];
         $this->editorUser->save();
 
         // Emit new object ids message to JavaScript editor

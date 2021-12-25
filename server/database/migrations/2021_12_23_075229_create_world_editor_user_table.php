@@ -24,6 +24,7 @@ class CreateWorldEditorUserTable extends Migration
             $table->double('camera_rotation_y');
             $table->double('camera_rotation_z');
             $table->unsignedBigInteger('selected_object_id')->nullable();
+            $table->boolean('skybox');
             $table->timestamps();
 
             $table->foreign('world_id')

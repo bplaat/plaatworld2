@@ -16,7 +16,8 @@ class Crud extends PaginationComponent
         'object.width' => 'required|numeric|min:0.001',
         'object.height' => 'required|numeric|min:0.001',
         'object.depth' => 'required|numeric|min:0',
-        'object.texture_id' => 'nullable|integer|exists:textures,id'
+        'object.texture_id' => 'nullable|integer|exists:textures,id',
+        'object.active' => 'nullable|boolean'
     ];
 
     public function __construct() {

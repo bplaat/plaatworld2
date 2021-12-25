@@ -2,10 +2,9 @@ const degrees = rad => rad * 180 / Math.PI;
 const radians = deg => (deg * Math.PI) / 180;
 
 function WorldEditor(data) {
-    let renderer, controls, stats, scene, camera, spawn, sprites = [], wireframe;
+    let renderer, controls, stats, scene, skyboxBackground, editorBackground, camera, spawn, sprites = [], wireframe;
     const meshes = new THREE.Group();
 
-    const planeGeometry = new THREE.PlaneGeometry(1, 1);
     const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
     const cylinderGeometry = new THREE.CylinderGeometry(1, 1, 1, 32);
     const sphereGeometry = new THREE.SphereGeometry(1, 32, 16);
@@ -36,8 +35,8 @@ function WorldEditor(data) {
             }
         }
         if (object.type == data.OBJECT_TYPE_SPRITE || object.type == data.OBJECT_TYPE_FIXED_SPRITE) {
-            mesh = new THREE.Mesh(planeGeometry, createMaterial(object.texture_id));
-            mesh.scale.set(object.width, object.height, 0);
+            mesh = new THREE.Mesh(boxGeometry, createMaterial(object.texture_id));
+            mesh.scale.set(object.width, object.height, 0.001);
             if (object.type == data.OBJECT_TYPE_SPRITE) {
                 sprites.push(mesh);
             }
@@ -67,6 +66,7 @@ function WorldEditor(data) {
             saved: false,
             objects: data.objects,
             world: data.world,
+            skybox: data.editorUser.skybox,
             selectedObjectId: null,
             selectedObject: {
                 stopWatching: false, type: 0, name: '',
@@ -87,6 +87,10 @@ function WorldEditor(data) {
         },
 
         watch: {
+            'skybox': function (skybox) {
+                scene.background = skybox ? skyboxBackground : editorBackground;
+            },
+
             'world.objects': function () {
                 this.syncObjects();
             },
@@ -166,9 +170,28 @@ function WorldEditor(data) {
         methods: {
             // Renderer
             initRenderer() {
+                // Renderer
+                renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('world-editor-canvas') });
+                window.addEventListener('resize', this.rendererResize.bind(this));
+                renderer.domElement.addEventListener('mouseup', this.rendererMouseup.bind(this));
+                renderer.domElement.addEventListener('dblclick', this.rendererDoubleclick.bind(this));
+                window.addEventListener('keydown', this.rendererKeydown.bind(this));
+
                 // Scene
+                const skyTextureData = data.textures.find(texture => texture.id == this.world.sky_texture_id);
+                const skyTexture = new THREE.TextureLoader().load('/storage/textures/' + skyTextureData.image, () => {
+                    const rt = new THREE.WebGLCubeRenderTarget(skyTexture.image.height);
+                    rt.fromEquirectangularTexture(renderer, skyTexture);
+                    skyboxBackground = rt.texture;
+                    if (this.skybox) {
+                        scene.background = skyboxBackground;
+                    }
+                });
+
+                editorBackground = new THREE.Color(getComputedStyle(document.querySelector('.has-navbar-fixed-top')).backgroundColor);
+
                 scene = new THREE.Scene();
-                scene.background = new THREE.Color(getComputedStyle(document.querySelector('.has-navbar-fixed-top')).backgroundColor);
+                scene.background = editorBackground;
                 scene.add(meshes);
 
                 // Camera
@@ -184,13 +207,6 @@ function WorldEditor(data) {
                     stats.dom.style.right = '16px';
                     document.body.appendChild(stats.dom);
                 }
-
-                // Renderer
-                renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('world-editor-canvas') });
-                window.addEventListener('resize', this.rendererResize.bind(this));
-                renderer.domElement.addEventListener('mouseup', this.rendererMouseup.bind(this));
-                renderer.domElement.addEventListener('dblclick', this.rendererDoubleclick.bind(this));
-                window.addEventListener('keydown', this.rendererKeydown.bind(this));
                 this.rendererResize();
 
                 // Controls
@@ -203,9 +219,10 @@ function WorldEditor(data) {
                 groundMaterial.map.repeat.set(data.world.width / 5, data.world.height / 5);
                 groundMaterial.map.wrapS = THREE.RepeatWrapping;
                 groundMaterial.map.wrapT = THREE.RepeatWrapping;
-                const ground = new THREE.Mesh(planeGeometry, groundMaterial);
+                const ground = new THREE.Mesh(boxGeometry, groundMaterial);
                 ground.scale.x = data.world.width;
                 ground.scale.y = data.world.height;
+                ground.scale.z = 0.001;
                 ground.rotation.x = -Math.PI / 2;
                 ground.position.y = -0.01;
                 scene.add(ground);
@@ -300,7 +317,7 @@ function WorldEditor(data) {
                     const position = new THREE.Vector3();
                     position.setFromMatrixPosition(sprite.matrixWorld);
                     sprite.rotation.y = Math.atan2((camera.position.x - position.x), (camera.position.z - position.z));
-                    if ('pivot' in sprite.userData && editor.selectedObjectId == sprite.userData.pivot.id) {
+                    if ('pivot' in sprite.userData && this.selectedObjectId == sprite.userData.pivot.id) {
                         wireframe.rotation.set(sprite.rotation.x, sprite.rotation.y, sprite.rotation.z);
                     }
                 }
@@ -404,7 +421,8 @@ function WorldEditor(data) {
                 data.editorUser.camera_rotation_x = camera.rotation.x;
                 data.editorUser.camera_rotation_y = camera.rotation.y;
                 data.editorUser.camera_rotation_z = camera.rotation.z;
-                data.editorUser.selected_object_id = editor.selectedObjectId;
+                data.editorUser.selected_object_id = this.selectedObjectId;
+                data.editorUser.skybox = this.skybox;
 
                 // Send save world message
                 data.livewire.saveWorld({ editorUser: data.editorUser, world: this.world });
