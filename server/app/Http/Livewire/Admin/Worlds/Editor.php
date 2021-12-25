@@ -118,7 +118,7 @@ class Editor extends Component
     {
         return view('livewire.admin.worlds.editor')->layout('layouts.app', [
             'title' => __('admin/worlds.editor.title', ['world.name' => $this->world->name]),
-            'immersive' => true, 'vuejs' => true, 'threejs' => true, 'statsjs' => true, 'orbitcontrolsjs' => true
+            'immersive' => true, 'vuejs' => true, 'threejs' => true, 'statsjs' => true
         ]);
     }
 }
