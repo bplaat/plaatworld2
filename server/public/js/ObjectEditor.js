@@ -10,6 +10,7 @@ function ObjectEditor(data) {
     const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
     const cylinderGeometry = new THREE.CylinderGeometry(1, 1, 1, 32);
     const sphereGeometry = new THREE.SphereGeometry(1, 32, 16);
+    const pyramidGeometry = new THREE.CylinderGeometry(0, 1, 1, 4);
     const wireframeMaterial = new THREE.LineBasicMaterial({ color: 0xff0000 });
 
     const materials = {};
@@ -38,25 +39,21 @@ function ObjectEditor(data) {
         let mesh;
         if (object.type == data.OBJECT_TYPE_SPRITE || object.type == data.OBJECT_TYPE_FIXED_SPRITE) {
             mesh = new THREE.Mesh(planeGeometry, createMaterial(object));
-            mesh.scale.set(object.width, object.height, 1);
             if (object.type == data.OBJECT_TYPE_SPRITE) {
                 sprites.push(mesh);
             }
         }
         if (object.type == data.OBJECT_TYPE_CUBE) {
             mesh = new THREE.Mesh(boxGeometry, createMaterial(object));
-            mesh.scale.set(object.width, object.height, object.depth);
         }
         if (object.type == data.OBJECT_TYPE_CYLINDER) {
             mesh = new THREE.Mesh(cylinderGeometry, createMaterial(object));
-            mesh.scale.set(object.width, object.height, object.depth);
         }
         if (object.type == data.OBJECT_TYPE_SPHERE) {
             mesh = new THREE.Mesh(sphereGeometry, createMaterial(object));
-            mesh.scale.set(object.width, object.height, object.depth);
         }
         if (object.type == data.OBJECT_TYPE_PYRAMID) {
-            mesh = new THREE.Mesh(new THREE.CylinderGeometry(0, Math.min(object.width, object.depth), object.height, 4), createMaterial(object));
+            mesh = new THREE.Mesh(pyramidGeometry, createMaterial(object));
         }
         return mesh;
     }
@@ -72,7 +69,8 @@ function ObjectEditor(data) {
             selectedObject: {
                 stopWatching: false, type: 0, name: '',
                 position_x: 0, position_y: 0, position_z: 0,
-                rotation_x: 0, rotation_y: 0, rotation_z: 0
+                rotation_x: 0, rotation_y: 0, rotation_z: 0,
+                scale_x: 0, scale_y: 0, scale_z: 0
             }
         },
 
@@ -96,8 +94,8 @@ function ObjectEditor(data) {
                 if (mesh != null) {
                     wireframe = new THREE.LineSegments(new THREE.EdgesGeometry(mesh.geometry), wireframeMaterial);
                     wireframe.position.set(mesh.position.x, mesh.position.y, mesh.position.z);
-                    wireframe.scale.set(object.width * 1.1, object.height * 1.1, object.depth * 1.1);
                     wireframe.rotation.set(mesh.rotation.x, mesh.rotation.y, mesh.rotation.z);
+                    wireframe.scale.set(mesh.scale.x, mesh.scale.y, mesh.scale.z);
                     scene.add(wireframe);
                 }
             },
@@ -158,6 +156,30 @@ function ObjectEditor(data) {
                 const mesh = meshes.children.find(mesh => mesh.userData.pivot.id == this.selectedObjectId);
                 mesh.rotation.z = real_rotation_z;
                 wireframe.rotation.z = mesh.rotation.z;
+            },
+            'selectedObject.scale_x': function (scale_x) {
+                if (this.stopWatching) return;
+                const object = this.object.objects.find(object => object.pivot.id == this.selectedObjectId);
+                object.pivot.scale_x = scale_x;
+                const mesh = meshes.children.find(mesh => mesh.userData.pivot.id == this.selectedObjectId);
+                mesh.scale.x = object.width * scale_x;
+                wireframe.scale.x = mesh.scale.x;
+            },
+            'selectedObject.scale_y': function (scale_y) {
+                if (this.stopWatching) return;
+                const object = this.object.objects.find(object => object.pivot.id == this.selectedObjectId);
+                object.pivot.scale_y = scale_y;
+                const mesh = meshes.children.find(mesh => mesh.userData.pivot.id == this.selectedObjectId);
+                mesh.scale.y = object.height * scale_y;
+                wireframe.scale.y = mesh.scale.y;
+            },
+            'selectedObject.scale_z': function (scale_z) {
+                if (this.stopWatching) return;
+                const object = this.object.objects.find(object => object.pivot.id == this.selectedObjectId);
+                object.pivot.scale_z = scale_z;
+                const mesh = meshes.children.find(mesh => mesh.userData.pivot.id == this.selectedObjectId);
+                mesh.scale.z = object.type == data.OBJECT_TYPE_SPRITE ? 1 : (object.depth * scale_z);
+                wireframe.scale.z = mesh.scale.z;
             }
         },
 
@@ -189,7 +211,6 @@ function ObjectEditor(data) {
                 renderer.domElement.addEventListener('mousedown', this.rendererMousedown.bind(this));
                 window.addEventListener('mousemove', this.rendererMousemove.bind(this));
                 window.addEventListener('mouseup', this.rendererMouseup.bind(this));
-                renderer.domElement.addEventListener('dblclick', this.rendererDoubleclick.bind(this));
                 renderer.domElement.addEventListener('wheel', this.rendererWheel.bind(this));
                 window.addEventListener('contextmenu', event => event.preventDefault());
                 window.addEventListener('keydown', this.rendererKeydown.bind(this));
@@ -235,6 +256,8 @@ function ObjectEditor(data) {
                 if (mouse.drag) {
                     const rotateSensitivity = 0.004;
                     const moveSensitivity = 0.015;
+                    const scrollSensitivity = 0.015;
+
                     if (mouse.button == 0) {
                         const euler = new THREE.Euler(0, 0, 0, 'YXZ');
                         euler.setFromQuaternion(camera.quaternion);
@@ -243,13 +266,23 @@ function ObjectEditor(data) {
                         euler.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, euler.x));
                         camera.quaternion.setFromEuler(euler);
                     }
-                    if (mouse.button == 1) {
-                        camera.translateZ(event.movementY * moveSensitivity * 2);
+
+                    if (mouse.button == 1 && this.selectedObjectId != null) {
+                        const object = this.object.objects.find(object => object.pivot.id == this.selectedObjectId);
+                        const mesh = meshes.children.find(mesh => mesh.userData.pivot.id == this.selectedObjectId);
+                        const oldY = mesh.position.y;
+                        mesh.translateX(event.movementX * moveSensitivity / 2);
+                        mesh.translateZ(event.movementY * moveSensitivity / 2);
+                        mesh.position.y = oldY;
+                        this.selectedObject.position_x = mesh.position.x;
+                        this.selectedObject.position_y = mesh.position.y - (object.type == data.OBJECT_TYPE_SPHERE ? object.height : object.height / 2);
+                        this.selectedObject.position_z = mesh.position.z;
                     }
+
                     if (mouse.button == 2) {
                         const oldY = camera.position.y;
-                        camera.translateX(-event.movementX * moveSensitivity);
-                        camera.translateZ(-event.movementY * moveSensitivity);
+                        camera.translateX(-event.movementX * scrollSensitivity);
+                        camera.translateZ(-event.movementY * scrollSensitivity);
                         camera.position.y = oldY;
                     }
                 }
@@ -265,18 +298,6 @@ function ObjectEditor(data) {
                         } else if ('pivot' in intersects[0].object.parent.userData) {
                             this.selectObjectId(intersects[0].object.parent.userData.pivot.id);
                         }
-                    }
-                }
-            },
-
-            rendererDoubleclick(event) {
-                if (this.selectedObjectId != null) {
-                    const intersects = this.sendRaycaster(scene.children, event.clientX, event.clientY);
-                    if (intersects.length > 0) {
-                        const point = intersects[0].point;
-                        this.selectedObject.position_x = point.x;
-                        this.selectedObject.position_y = point.y;
-                        this.selectedObject.position_z = point.z;
                     }
                 }
             },
@@ -306,12 +327,15 @@ function ObjectEditor(data) {
 
                     // Object position
                     const positionStep = 2 * delta, rotationStep = 45 * delta;
+                    const oldY = mesh.position.y;
                     if (keys['arrowleft']) mesh.translateX(-positionStep);
                     if (keys['arrowright']) mesh.translateX(positionStep);
                     if (keys['arrowup']) mesh.translateZ(-positionStep);
                     if (keys['arrowdown']) mesh.translateZ(positionStep);
+                    mesh.position.y = oldY;
                     if (keys['arrowleft'] || keys['arrowright'] || keys['arrowup'] || keys['arrowdown']) {
                         this.selectedObject.position_x = mesh.position.x;
+                        this.selectedObject.position_y = mesh.position.y - (object.type == data.OBJECT_TYPE_SPHERE ? object.height : object.height / 2);
                         this.selectedObject.position_z = mesh.position.z;
                     }
 
@@ -365,6 +389,7 @@ function ObjectEditor(data) {
                     mesh.userData = object;
                     mesh.position.set(object.pivot.position_x, object.pivot.position_y + (object.type == data.OBJECT_TYPE_SPHERE ? object.height : object.height / 2), object.pivot.position_z);
                     mesh.rotation.set(object.pivot.rotation_x, object.pivot.rotation_y, object.pivot.rotation_z);
+                    mesh.scale.set(object.width * object.pivot.scale_x, object.height * object.pivot.scale_y, object.type == data.OBJECT_TYPE_SPRITE ? 1 : (object.depth * object.pivot.scale_z));
                     meshes.add(mesh);
                 }
             },
@@ -414,7 +439,10 @@ function ObjectEditor(data) {
                         position_z: selectedObject != undefined ? selectedObject.pivot.position_z : 0,
                         rotation_x: selectedObject != undefined ? selectedObject.pivot.rotation_x : 0,
                         rotation_y: selectedObject != undefined ? selectedObject.pivot.rotation_y : 0,
-                        rotation_z: selectedObject != undefined ? selectedObject.pivot.rotation_z : 0
+                        rotation_z: selectedObject != undefined ? selectedObject.pivot.rotation_z : 0,
+                        scale_x: selectedObject != undefined ? selectedObject.pivot.scale_x : 1,
+                        scale_y: selectedObject != undefined ? selectedObject.pivot.scale_y : 1,
+                        scale_z: selectedObject != undefined ? selectedObject.pivot.scale_z : 1
                     };
                 }
                 newObject.pivot.id = Date.now();
@@ -426,6 +454,7 @@ function ObjectEditor(data) {
                 mesh.userData = newObject;
                 mesh.position.set(newObject.pivot.position_x, newObject.pivot.position_y + (newObject.type == data.OBJECT_TYPE_SPHERE ? newObject.height : newObject.height / 2), newObject.pivot.position_z);
                 mesh.rotation.set(newObject.pivot.rotation_x, newObject.pivot.rotation_y, newObject.pivot.rotation_z);
+                mesh.scale.set(newObject.width * newObject.pivot.scale_x, newObject.height * newObject.pivot.scale_y, newObject.type == data.OBJECT_TYPE_SPRITE ? 1 : (newObject.depth * newObject.pivot.scale_z));
                 meshes.add(mesh);
             },
 
@@ -460,6 +489,9 @@ function ObjectEditor(data) {
                     this.selectedObject.rotation_x = degrees(object.pivot.rotation_x);
                     this.selectedObject.rotation_y = degrees(object.pivot.rotation_y);
                     this.selectedObject.rotation_z = degrees(object.pivot.rotation_z);
+                    this.selectedObject.scale_x = object.pivot.scale_x;
+                    this.selectedObject.scale_y = object.pivot.scale_y;
+                    this.selectedObject.scale_z = object.pivot.scale_z;
                     this.stopWatching = false;
                 } else {
                     this.selectedObjectId = null;

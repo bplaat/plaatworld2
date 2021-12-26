@@ -54,6 +54,9 @@ class Editor extends Component
                 $objectPivot->rotation_x = $object['pivot']['rotation_x'];
                 $objectPivot->rotation_y = $object['pivot']['rotation_y'];
                 $objectPivot->rotation_z = $object['pivot']['rotation_z'];
+                $objectPivot->scale_x = $object['pivot']['scale_x'];
+                $objectPivot->scale_y = $object['pivot']['scale_y'];
+                $objectPivot->scale_z = $object['pivot']['scale_z'];
                 $objectPivot->save();
             } else {
                 if ($this->editorUser->selected_object_id == $objectPivot->id) {
@@ -78,6 +81,9 @@ class Editor extends Component
             $objectPivot->rotation_x = $object['pivot']['rotation_x'];
             $objectPivot->rotation_y = $object['pivot']['rotation_y'];
             $objectPivot->rotation_z = $object['pivot']['rotation_z'];
+            $objectPivot->scale_x = $object['pivot']['scale_x'];
+            $objectPivot->scale_y = $object['pivot']['scale_y'];
+            $objectPivot->scale_z = $object['pivot']['scale_z'];
             $objectPivot->save();
             $newObjectIds[$object['pivot']['id']] = $objectPivot->id;
         }

@@ -53,7 +53,7 @@ class GameObject extends Model
     public function objects()
     {
         return $this->belongsToMany(GameObject::class, 'object_object', 'parent_object_id', 'object_id')
-            ->withPivot('id', 'name', 'position_x', 'position_y', 'position_z', 'rotation_x', 'rotation_y', 'rotation_z')->withTimestamps();
+            ->withPivot('id', 'name', 'position_x', 'position_y', 'position_z', 'rotation_x', 'rotation_y', 'rotation_z', 'scale_x', 'scale_y', 'scale_z')->withTimestamps();
     }
 
     // Search by a query

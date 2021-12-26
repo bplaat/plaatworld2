@@ -15,6 +15,9 @@ class ObjectObject extends Model
         'position_z' => 'double',
         'rotation_x' => 'double',
         'rotation_y' => 'double',
-        'rotation_z' => 'double'
+        'rotation_z' => 'double',
+        'scale_x' => 'double',
+        'scale_y' => 'double',
+        'scale_z' => 'double'
     ];
 }

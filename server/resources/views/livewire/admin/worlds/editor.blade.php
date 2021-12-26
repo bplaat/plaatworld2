@@ -35,7 +35,7 @@
             style="position:absolute;top:0;right:0;width:16rem;max-height:calc(100vh - 19.5rem);overflow-y:auto;border-radius:3px;">
             <div class="field">
                 <h2 class="title is-6">
-                    House (Cube)
+                    @{{ world.objects.find(object => object.pivot.id == selectedObjectId).name }}
                     <button class="delete is-small is-pulled-right" @click="selectedObjectId = null"></button>
                 </h2>
             </div>
@@ -87,6 +87,28 @@
                 <label class="label is-small" for="rotation_z">@lang('admin/worlds.editor.rotation_z')</label>
                 <div class="control">
                     <input class="input is-small" type="number" step="0.001" id="rotation_z" v-model="selectedObject.rotation_z">
+                </div>
+            </div>
+
+            <div class="field">
+                <h3 class="title is-6">@lang('admin/objects.editor.scale')</h3>
+            </div>
+            <div class="field">
+                <label class="label is-small" for="scale_x">@lang('admin/objects.editor.scale_x')</label>
+                <div class="control">
+                    <input class="input is-small" type="number" step="0.001" id="scale_x" v-model="selectedObject.scale_x">
+                </div>
+            </div>
+            <div class="field">
+                <label class="label is-small" for="scale_y">@lang('admin/objects.editor.scale_y')</label>
+                <div class="control">
+                    <input class="input is-small" type="number" step="0.001" id="scale_y" v-model="selectedObject.scale_y">
+                </div>
+            </div>
+            <div class="field" v-if="selectedObject.type != {{ App\Models\GameObject::TYPE_SPRITE }}">
+                <label class="label is-small" for="scale_z">@lang('admin/objects.editor.scale_z')</label>
+                <div class="control">
+                    <input class="input is-small" type="number" step="0.001" id="scale_z" v-model="selectedObject.scale_z">
                 </div>
             </div>
         </div>

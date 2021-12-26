@@ -22,6 +22,7 @@ function ObjectViewer(data) {
     const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
     const cylinderGeometry = new THREE.CylinderGeometry(1, 1, 1, 32);
     const sphereGeometry = new THREE.SphereGeometry(1, 32, 16);
+    const pyramidGeometry = new THREE.CylinderGeometry(0, 1, 1, 4);
 
     const materials = {};
     function createMaterial(object) {
@@ -57,30 +58,27 @@ function ObjectViewer(data) {
                 const child = createMesh(childObject);
                 child.position.set(childObject.pivot.position_x, childObject.pivot.position_y + childObject.height / 2, childObject.pivot.position_z);
                 child.rotation.set(childObject.pivot.rotation_x, childObject.pivot.rotation_y, childObject.pivot.rotation_z);
+                child.scale.set(childObject.width * childObject.pivot.scale_x, childObject.height * childObject.pivot.scale_y, childObject.type == data.OBJECT_TYPE_SPRITE ? 1 : (childObject.depth * childObject.pivot.scale_z));
                 mesh.add(child);
             }
         }
         if (object.type == data.OBJECT_TYPE_SPRITE || object.type == data.OBJECT_TYPE_FIXED_SPRITE) {
             mesh = new THREE.Mesh(planeGeometry, createMaterial(object));
-            mesh.scale.set(object.width, object.height, 0);
             if (object.type == data.OBJECT_TYPE_SPRITE) {
                 sprites.push(mesh);
             }
         }
         if (object.type == data.OBJECT_TYPE_CUBE) {
             mesh = new THREE.Mesh(boxGeometry, createMaterial(object));
-            mesh.scale.set(object.width, object.height, object.depth);
         }
         if (object.type == data.OBJECT_TYPE_CYLINDER) {
             mesh = new THREE.Mesh(cylinderGeometry, createMaterial(object));
-            mesh.scale.set(object.width, object.height, object.depth);
         }
         if (object.type == data.OBJECT_TYPE_SPHERE) {
             mesh = new THREE.Mesh(sphereGeometry, createMaterial(object));
-            mesh.scale.set(object.width, object.height, object.depth);
         }
         if (object.type == data.OBJECT_TYPE_PYRAMID) {
-            mesh = new THREE.Mesh(new THREE.CylinderGeometry(0, Math.min(object.width, object.depth), object.height, 4), createMaterial(object));
+            mesh = new THREE.Mesh(pyramidGeometry, createMaterial(object));
         }
         return mesh;
     }
@@ -89,6 +87,9 @@ function ObjectViewer(data) {
     const mesh = createMesh(data.object);
     if (mesh != undefined) {
         mesh.position.y = data.object.height / 2;
+        if (data.object.type != data.OBJECT_TYPE_GROUP) {
+            mesh.scale.set(data.object.width, data.object.height, data.object.type == data.OBJECT_TYPE_SPRITE ? 1 : data.object.depth);
+        }
         scene.add(mesh);
 
         const clock = new THREE.Clock();

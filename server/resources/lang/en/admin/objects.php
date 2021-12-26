@@ -71,5 +71,9 @@ return [
     'editor.rotation' => 'Rotation',
     'editor.rotation_x' => 'Rotation X (&deg;)',
     'editor.rotation_y' => 'Rotation Y (&deg;)',
-    'editor.rotation_z' => 'Rotation Z (&deg;)'
+    'editor.rotation_z' => 'Rotation Z (&deg;)',
+    'editor.scale' => 'Scale',
+    'editor.scale_x' => 'Scale X (&times;)',
+    'editor.scale_y' => 'Scale Y (&times;)',
+    'editor.scale_z' => 'Scale Z (&times;)'
 ];

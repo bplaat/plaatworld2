@@ -24,6 +24,9 @@ class CreateWorldObjectTable extends Migration
             $table->double('rotation_x');
             $table->double('rotation_y');
             $table->double('rotation_z');
+            $table->double('scale_x');
+            $table->double('scale_y');
+            $table->double('scale_z');
             $table->timestamps();
 
             $table->foreign('world_id')
