@@ -45,7 +45,7 @@
                 </div>
 
                 <div class="control">
-                    <input class="input" type="text" placeholder="@lang('play.chat_placeholder')" v-model="chatMessage" @change="sendChat">
+                    <input class="input" type="text" id="chat-input" placeholder="@lang('play.chat_placeholder')" v-model="chatMessage" @change="sendChat">
                 </div>
             </div>
         </div>

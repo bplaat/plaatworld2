@@ -25,6 +25,12 @@ class Taunt extends Model
         'active' => 'boolean'
     ];
 
+    // A taunt has one sound
+    public function sound()
+    {
+        return $this->hasOne(Sound::class, 'id', 'sound_id');
+    }
+
     // Search by a query
     public static function search($query, $searchQuery)
     {

@@ -54,9 +54,9 @@ class Connection {
 let game;
 
 function Game(config) {
-    let user, world, textures, renderer, keys = {}, stats, scene, clock,
-        serverPosition, serverRotation, sendMoveTimeout = Date.now(), camera, sprites = [], players = new THREE.Group();
-    const meshes = new THREE.Group();
+    let user, world, textures, taunts, renderer, keys = {}, stats, scene, clock,
+        serverPosition, serverRotation, sendMoveTimeout = Date.now(), camera, sprites = [],
+        players = new THREE.Group(), meshes = new THREE.Group();
 
     const planeGeometry = new THREE.PlaneGeometry(1, 1);
     const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
@@ -160,6 +160,7 @@ function Game(config) {
                                     this.worldLoaded = true;
                                     world = data.world;
                                     textures = data.textures;
+                                    taunts = data.taunts;
                                     this.users = [];
                                     this.chats = [];
                                     players.clear();
@@ -287,10 +288,7 @@ function Game(config) {
 
                     if (type == 'user.chat') {
                         data.chat.user = this.users.find(user => user.id == data.user_id);
-                        this.chats.push(data.chat);
-                        setTimeout(() => {
-                            this.chats = this.chats.filter(chat => chat.id != data.chat.id);
-                        }, config.CHAT_FADE_TIMEOUT);
+                        this.handleChat(data.chat);
                     }
                 };
 
@@ -359,9 +357,24 @@ function Game(config) {
             },
 
             rendererKeydown(event) {
-                if (event.target != document.body) return;
                 const key = event.key.toLowerCase();
+                const chatInput = document.getElementById('chat-input');
+
+                if (key == 't' || key == 'enter') {
+                    if (chatInput.value == '' && chatInput == document.activeElement) {
+                        chatInput.blur();
+                    }
+                }
+
+                if (event.target != document.body) return;
                 keys[key] = true;
+
+                if (key == 't' || key == 'enter') {
+                    if (chatInput != document.activeElement) {
+                        keys = {};
+                        chatInput.focus();
+                    }
+                }
             },
 
             rendererKeyup(event) {
@@ -429,14 +442,29 @@ function Game(config) {
                 }
             },
 
+            handleChat(chat) {
+                // Play taunt
+                for (const taunt of taunts) {
+                    if (chat.message.trim() == taunt.taunt) {
+                        chat.message = taunt.taunt + ': ' + taunt.text_en;
+                        new Audio('/storage/sounds/' + taunt.sound.audio).play();
+                        break;
+                    }
+                }
+
+                // Add chat to chats and set timeout for removal
+                setTimeout(() => {
+                    this.chats = this.chats.filter(otherChat => otherChat.id != chat.id);
+                }, config.CHAT_FADE_TIMEOUT);
+                this.chats.push(chat);
+            },
+
             sendChat() {
+                document.getElementById('chat-input').blur();
                 this.connection.send('user.chat', { user_id: config.userId, message: this.chatMessage }, data => {
                     if (data.success) {
                         data.chat.user = user;
-                        this.chats.push(data.chat);
-                        setTimeout(() => {
-                            this.chats = this.chats.filter(chat => chat.id != data.chat.id);
-                        }, config.CHAT_FADE_TIMEOUT);
+                        this.handleChat(data.chat);
                         this.chatMessage = '';
                     }
                 });

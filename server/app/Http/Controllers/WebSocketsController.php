@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\GameObject;
 use App\Models\Texture;
+use App\Models\Taunt;
 use App\Models\User;
 use App\Models\World;
 use App\Models\WorldChat;
@@ -160,7 +161,12 @@ class WebSocketsController extends Controller implements MessageComponentInterfa
             $this->connections[$connection->resourceId]['worldUser'] = $worldUser;
 
             // Send response message
-            send($connection, $id, $type . '.response', ['success' => true, 'world' => $world, 'textures' => Texture::all()]);
+            send($connection, $id, $type . '.response', [
+                'success' => true,
+                'world' => $world,
+                'textures' => Texture::all(),
+                'taunts' => Taunt::with('sound')->get()
+            ]);
 
             // Send messages of all connected users and yourself to you
             foreach ($this->connections as $resourceId => $otherConnection) {
