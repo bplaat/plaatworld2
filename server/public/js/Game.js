@@ -51,6 +51,8 @@ class Connection {
     }
 }
 
+let game;
+
 function Game(config) {
     let user, world, textures, renderer, keys = {}, stats, scene, clock,
         serverPosition, serverRotation, sendMoveTimeout = Date.now(), camera, sprites = [], players = new THREE.Group();
@@ -119,7 +121,7 @@ function Game(config) {
         return mesh;
     }
 
-    const game = new Vue({
+    game = new Vue({
         el: '#game',
 
         data: {
@@ -369,7 +371,7 @@ function Game(config) {
 
             update(delta) {
                 // Camera position controls
-                if (this.pointerlock) {
+                if (this.pointerlock && world != undefined) {
                     const cameraSpeed = 10;
                     const oldCameraY = camera.position.y;
                     if (keys['w']) camera.translateZ(-cameraSpeed * delta);
