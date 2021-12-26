@@ -13,41 +13,50 @@ function ObjectEditor(data) {
     const wireframeMaterial = new THREE.LineBasicMaterial({ color: 0xff0000 });
 
     const materials = {};
-    function createMaterial(texture_id) {
-        if (materials[texture_id] == undefined) {
-            const texture = data.textures.find(texture => texture.id == texture_id);
-            materials[texture_id] = new THREE.MeshBasicMaterial({
+    function createMaterial(object) {
+        const textureId = object.texture_id + '@' + object.texture_repeat_x + 'x' + object.texture_repeat_y;
+        if (materials[textureId] == undefined) {
+            const texture = data.textures.find(texture => texture.id == object.texture_id);
+            materials[textureId] = new THREE.MeshBasicMaterial({
                 map: new THREE.TextureLoader().load('/storage/textures/' + texture.image),
                 transparent: texture.transparent,
                 side: THREE.DoubleSide
             });
+            if (object.texture_repeat_x != 1) {
+                materials[textureId].map.repeat.x = object.texture_repeat_x;
+                materials[textureId].map.wrapS = THREE.RepeatWrapping;
+            }
+            if (object.texture_repeat_y != 1) {
+                materials[textureId].map.repeat.y = object.texture_repeat_y;
+                materials[textureId].map.wrapT = THREE.RepeatWrapping;
+            }
         }
-        return materials[texture_id];
+        return materials[textureId];
     }
 
     function createMesh(object) {
         let mesh;
         if (object.type == data.OBJECT_TYPE_SPRITE || object.type == data.OBJECT_TYPE_FIXED_SPRITE) {
-            mesh = new THREE.Mesh(planeGeometry, createMaterial(object.texture_id));
+            mesh = new THREE.Mesh(planeGeometry, createMaterial(object));
             mesh.scale.set(object.width, object.height, 1);
             if (object.type == data.OBJECT_TYPE_SPRITE) {
                 sprites.push(mesh);
             }
         }
         if (object.type == data.OBJECT_TYPE_CUBE) {
-            mesh = new THREE.Mesh(boxGeometry, createMaterial(object.texture_id));
+            mesh = new THREE.Mesh(boxGeometry, createMaterial(object));
             mesh.scale.set(object.width, object.height, object.depth);
         }
         if (object.type == data.OBJECT_TYPE_CYLINDER) {
-            mesh = new THREE.Mesh(cylinderGeometry, createMaterial(object.texture_id));
+            mesh = new THREE.Mesh(cylinderGeometry, createMaterial(object));
             mesh.scale.set(object.width, object.height, object.depth);
         }
         if (object.type == data.OBJECT_TYPE_SPHERE) {
-            mesh = new THREE.Mesh(sphereGeometry, createMaterial(object.texture_id));
+            mesh = new THREE.Mesh(sphereGeometry, createMaterial(object));
             mesh.scale.set(object.width, object.height, object.depth);
         }
         if (object.type == data.OBJECT_TYPE_PYRAMID) {
-            mesh = new THREE.Mesh(new THREE.CylinderGeometry(0, Math.min(object.width, object.depth), object.height, 4), createMaterial(object.texture_id));
+            mesh = new THREE.Mesh(new THREE.CylinderGeometry(0, Math.min(object.width, object.depth), object.height, 4), createMaterial(object));
         }
         return mesh;
     }

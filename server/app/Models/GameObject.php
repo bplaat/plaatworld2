@@ -27,6 +27,8 @@ class GameObject extends Model
         'width' => 1,
         'height' => 1,
         'depth' => 0,
+        'texture_repeat_x' => 1,
+        'texture_repeat_y' => 1,
         'active' => true
     ];
 

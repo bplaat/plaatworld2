@@ -103,6 +103,30 @@
 
                     <livewire:components.texture-chooser name="texture" includeInactive="true" />
 
+                    <div class="columns">
+                        <div class="column">
+                            <div class="field">
+                                <label class="label" for="texture_repeat_x">@lang('admin/objects.crud.texture_repeat_x')</label>
+                                <div class="control">
+                                    <input class="input @error('object.texture_repeat_x') is-danger @enderror" type="number" step="1" id="texture_repeat_x"
+                                        wire:model.defer="object.texture_repeat_x" required>
+                                </div>
+                                @error('object.texture_repeat_x') <p class="help is-danger">{{ $message }}</p> @enderror
+                            </div>
+                        </div>
+
+                        <div class="column">
+                            <div class="field">
+                                <label class="label" for="texture_repeat_y">@lang('admin/objects.crud.texture_repeat_y')</label>
+                                <div class="control">
+                                    <input class="input @error('object.texture_repeat_y') is-danger @enderror" type="number" step="1" id="texture_repeat_y"
+                                        wire:model.defer="object.texture_repeat_y" required>
+                                </div>
+                                @error('object.texture_repeat_y') <p class="help is-danger">{{ $message }}</p> @enderror
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="field">
                         <label class="label" for="active">@lang('admin/objects.crud.active')</label>
                         <label class="checkbox" for="active">

@@ -21,6 +21,8 @@ class CreateObjectsTable extends Migration
             $table->double('height');
             $table->double('depth');
             $table->unsignedBigInteger('texture_id')->nullable();
+            $table->integer('texture_repeat_x');
+            $table->integer('texture_repeat_y');
             $table->boolean('active');
             $table->timestamps();
             $table->softDeletes();
