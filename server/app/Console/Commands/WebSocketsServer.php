@@ -54,6 +54,11 @@ class WebSocketsServer extends Command
             $loop
         );
 
-       $loop->run();
+        // Add save timer
+        $timer = $loop->addPeriodicTimer(config('game.player_move_save_timeout') / 1000, function () use ($websocketsController) {
+            $websocketsController->onSave();
+        });
+
+        $loop->run();
     }
 }

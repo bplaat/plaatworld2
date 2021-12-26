@@ -2,10 +2,7 @@
 
 # Todo List
 - v0.1.0:
-    - Websockets server for worlds
-    - Real fps gameview of a world
     - You see other players in world and move
-    - Player chat (saved in database)
     - Simple taunts system
 - v0.2.0:
     - Add path and region object type

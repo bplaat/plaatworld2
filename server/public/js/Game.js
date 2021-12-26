@@ -52,7 +52,8 @@ class Connection {
 }
 
 function Game(config) {
-    let user, world, textures, renderer, keys = {}, stats, scene, skyboxBackground, pageBackground, clock, camera, sprites = [];
+    let user, world, textures, renderer, keys = {}, stats, scene, clock,
+        serverPosition, serverRotation, sendMoveTimeout = Date.now(), camera, sprites = [];
     const meshes = new THREE.Group();
 
     const planeGeometry = new THREE.PlaneGeometry(1, 1);
@@ -123,6 +124,7 @@ function Game(config) {
 
         data: {
             connection: new Connection(config.WEBSOCKETS_URL, config.WEBSOCKETS_RECONNECT_TIMEOUT),
+            pointerlock: false,
             users: [],
             chatMessage: '',
             chats: []
@@ -156,6 +158,8 @@ function Game(config) {
                                 if (data.success) {
                                     world = data.world;
                                     textures = data.textures;
+                                    this.users = [];
+                                    this.chats = [];
 
                                     // Load world sky
                                     const skyTextureData = textures.find(texture => texture.id == world.sky_texture_id);
@@ -194,6 +198,7 @@ function Game(config) {
                         }
                     });
                 };
+
                 this.connection.onMessage = (id, type, data) => {
                     console.log(id, type, data);
 
@@ -202,8 +207,10 @@ function Game(config) {
 
                         // Move camera to right position
                         if (data.user.id == config.userId) {
-                            camera.position.set(data.position.x, data.position.y + 1.5, data.position.z);
+                            camera.position.set(data.position.x, data.position.y + config.PLAYER_HEIGHT, data.position.z);
                             camera.rotation.set(data.rotation.x, data.rotation.y, data.rotation.z);
+                            serverPosition = { x: data.position.x, y: data.position.y, z: data.position.z };
+                            serverRotation = { x: data.rotation.x, y: data.rotation.y, z: data.rotation.z };
                         }
                     }
                     if (type == 'user.disconnect') {
@@ -219,18 +226,20 @@ function Game(config) {
                 };
             },
 
-            // Renderer
             initRenderer() {
                 // Renderer
                 renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('game-canvas') });
                 window.addEventListener('resize', this.rendererResize.bind(this));
+                window.addEventListener('mousemove', this.rendererMousemove.bind(this));
+                renderer.domElement.addEventListener('click', this.rendererClick.bind(this));
+                window.addEventListener('contextmenu', event => event.preventDefault());
+                document.addEventListener('pointerlockchange', this.rendererPointerlockChange.bind(this));
                 window.addEventListener('keydown', this.rendererKeydown.bind(this));
                 window.addEventListener('keyup', this.rendererKeyup.bind(this));
 
                 // Scene
-                pageBackground = new THREE.Color(getComputedStyle(document.querySelector('.has-navbar-fixed-top')).backgroundColor);
                 scene = new THREE.Scene();
-                scene.background = pageBackground;
+                scene.background = new THREE.Color(getComputedStyle(document.querySelector('.has-navbar-fixed-top')).backgroundColor);
                 scene.add(meshes);
 
                 // Camera
@@ -246,22 +255,6 @@ function Game(config) {
                     document.body.appendChild(stats.dom);
                 }
                 this.rendererResize();
-
-                // Ground
-                // const grassTexture = data.textures.find(texture => texture.name == 'Grass');
-                // const groundMaterial = new THREE.MeshBasicMaterial({
-                //     map: new THREE.TextureLoader().load('/storage/textures/' + grassTexture.image),
-                //     side: THREE.DoubleSide
-                // });
-                // groundMaterial.map.repeat.set(data.world.width / 5, data.world.height / 5);
-                // groundMaterial.map.wrapS = THREE.RepeatWrapping;
-                // groundMaterial.map.wrapT = THREE.RepeatWrapping;
-                // const ground = new THREE.Mesh(planeGeometry, groundMaterial);
-                // ground.scale.x = data.world.width;
-                // ground.scale.y = data.world.height;
-                // ground.rotation.x = -Math.PI / 2;
-                // ground.position.y = -0.01;
-                // scene.add(ground);
             },
 
             rendererResize() {
@@ -269,6 +262,28 @@ function Game(config) {
                 camera.aspect = window.innerWidth / height;
                 camera.updateProjectionMatrix();
                 renderer.setSize(window.innerWidth, height);
+            },
+
+            rendererMousemove(event) {
+                if (this.pointerlock) {
+                    const rotateSensitivity = 0.004;
+                    const euler = new THREE.Euler(0, 0, 0, 'YXZ');
+                    euler.setFromQuaternion(camera.quaternion);
+                    euler.y -= event.movementX * rotateSensitivity;
+                    euler.x -= event.movementY * rotateSensitivity;
+                    euler.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, euler.x));
+                    camera.quaternion.setFromEuler(euler);
+                }
+            },
+
+            rendererClick() {
+                if (!this.pointerlock) {
+                    renderer.domElement.requestPointerLock();
+                }
+            },
+
+            rendererPointerlockChange() {
+                this.pointerlock = document.pointerLockElement == renderer.domElement;
             },
 
             rendererKeydown(event) {
@@ -284,46 +299,20 @@ function Game(config) {
             },
 
             update(delta) {
-                // Check key input
-                if (this.selectedObjectId != null) {
-                    const object = world.objects.find(object => object.pivot.id == this.selectedObjectId);
-                    const mesh = meshes.children.find(mesh => mesh.userData.pivot.id == this.selectedObjectId);
-
-                    // Object position
-                    const positionStep = 2 * delta, rotationStep = 45 * delta;
-                    if (keys['arrowleft']) mesh.translateX(-positionStep);
-                    if (keys['arrowright']) mesh.translateX(positionStep);
-                    if (keys['arrowup']) mesh.translateZ(-positionStep);
-                    if (keys['arrowdown']) mesh.translateZ(positionStep);
-                    if (keys['arrowleft'] || keys['arrowright'] || keys['arrowup'] || keys['arrowdown']) {
-                        this.selectedObject.position_x = mesh.position.x;
-                        this.selectedObject.position_z = mesh.position.z;
-                    }
-
-                    // Object rotation
-                    if (object.type != config.OBJECT_TYPE_SPRITE) {
-                        if (keys['q']) this.selectedObject.rotation_y = parseFloat(this.selectedObject.rotation_y) - rotationStep;
-                        if (keys['e']) this.selectedObject.rotation_y = parseFloat(this.selectedObject.rotation_y) + rotationStep;
-                    }
-
-                    // Object create and delete
-                    if (keys['c']) {
-                        keys['c'] = false;
-                        this.addObject(object);
-                    }
-                    if (keys['backspace'] || keys['delete']) this.deleteObject(object.pivot.id);
+                // Camera position controls
+                if (this.pointerlock) {
+                    const cameraSpeed = 10;
+                    const oldCameraY = camera.position.y;
+                    if (keys['w']) camera.translateZ(-cameraSpeed * delta);
+                    if (keys['s']) camera.translateZ(cameraSpeed * delta);
+                    if (keys['a']) camera.translateX(-cameraSpeed * delta);
+                    if (keys['d']) camera.translateX(cameraSpeed * delta);
+                    camera.position.y = oldCameraY;
+                    if (camera.position.x < -world.width / 2) camera.position.x = -world.width / 2;
+                    if (camera.position.x > world.width / 2) camera.position.x = world.width / 2;
+                    if (camera.position.z < -world.height / 2) camera.position.z = -world.height / 2;
+                    if (camera.position.z > world.height / 2) camera.position.z = world.height / 2;
                 }
-
-                // Camera position
-                const cameraSpeed = 15;
-                const oldCameraY = camera.position.y;
-                if (keys['w']) camera.translateZ(-cameraSpeed * delta);
-                if (keys['s']) camera.translateZ(cameraSpeed * delta);
-                if (keys['a']) camera.translateX(-cameraSpeed * delta);
-                if (keys['d']) camera.translateX(cameraSpeed * delta);
-                camera.position.y = oldCameraY;
-                if (keys[' ']) camera.position.y += cameraSpeed * delta;
-                if (keys['shift']) camera.position.y -= cameraSpeed * delta;
 
                 // Rotate sprites
                 for (const sprite of sprites) {
@@ -331,6 +320,21 @@ function Game(config) {
                     if (!('pivot' in sprite.userData)) sprite.parent.localToWorld(spritePosition);
                     sprite.rotation.y = Math.atan2((camera.position.x - spritePosition.x), (camera.position.z - spritePosition.z)) -
                         (!('pivot' in sprite.userData) ? sprite.parent.rotation.y : 0);
+                }
+
+                // Send player position to server
+                if (serverPosition != undefined && serverRotation != undefined) {
+                    if (Date.now() - sendMoveTimeout >= config.PLAYER_MOVE_SEND_TIMEOUT) {
+                        if (
+                            camera.position.x != serverPosition.x || camera.position.y - config.PLAYER_HEIGHT != serverPosition.y || camera.position.z != serverPosition.z ||
+                            camera.rotation.x != serverRotation.x || camera.rotation.y != serverRotation.y || camera.rotation.z != serverRotation.z
+                        ) {
+                            serverPosition = { x: camera.position.x, y: camera.position.y - config.PLAYER_HEIGHT, z: camera.position.z };
+                            serverRotation = { x: camera.rotation.x, y: camera.rotation.y, z: camera.rotation.z };
+                            this.connection.send('user.move', { position: serverPosition, rotation: serverRotation });
+                        }
+                        sendMoveTimeout = Date.now()
+                    }
                 }
             },
 

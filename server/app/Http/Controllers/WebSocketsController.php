@@ -52,7 +52,7 @@ class WebSocketsController extends Controller implements MessageComponentInterfa
 
     public function onOpen(ConnectionInterface $connection) {
         echo 'Client connected' . PHP_EOL;
-        $this->connections[$connection->resourceId] = ['connection' => $connection, 'user' => null, 'world' => null, 'worldUser' => null, 'saveMoveTimeout' => 0];
+        $this->connections[$connection->resourceId] = ['connection' => $connection, 'user' => null, 'world' => null, 'worldUser' => null];
     }
 
     public function onMessage(ConnectionInterface $connection, $message) {
@@ -210,13 +210,6 @@ class WebSocketsController extends Controller implements MessageComponentInterfa
                 return;
             }
 
-            // Broadcast message
-            broadcast($user->id, $world->id, $this->connections, $id, $type, [
-                'user_id' => $user->id,
-                'position' => ['x' => $data->position->x, 'y' => $data->position->y, 'z' => $data->position->z],
-                'rotation' => ['x' => $data->rotation->x, 'y' => $data->rotation->y, 'z' => $data->rotation->z]
-            ]);
-
             // Update world user
             $worldUser = $this->connections[$connection->resourceId]['worldUser'];
             $worldUser->position_x = $data->position->x;
@@ -226,15 +219,12 @@ class WebSocketsController extends Controller implements MessageComponentInterfa
             $worldUser->rotation_y = $data->rotation->y;
             $worldUser->rotation_z = $data->rotation->z;
 
-            // Save move when timeout is over
-            $saveMoveTimeout = $this->connections[$connection->resourceId]['saveMoveTimeout'];
-            if ($saveMoveTimeout == 0) {
-                $this->connections[$connection->resourceId]['saveMoveTimeout'] = time();
-            }
-            if (time() - $saveMoveTimeout >= 10) {
-                $worldUser->save();
-                $this->connections[$connection->resourceId]['saveMoveTimeout'] = time();
-            }
+            // Broadcast message
+            broadcast($user->id, $world->id, $this->connections, $id, $type, [
+                'user_id' => $user->id,
+                'position' => ['x' => $data->position->x, 'y' => $data->position->y, 'z' => $data->position->z],
+                'rotation' => ['x' => $data->rotation->x, 'y' => $data->rotation->y, 'z' => $data->rotation->z]
+            ]);
         }
 
         if ($type == 'user.chat') {
@@ -267,7 +257,17 @@ class WebSocketsController extends Controller implements MessageComponentInterfa
 
             // Send response message
             send($connection, $id, $type . '.response', ['success' => true, 'chat' => $worldChat]);
+        }
+    }
 
+    public function onSave() {
+        echo 'Save clients data' . PHP_EOL;
+
+        // Save pending world user positions
+        foreach ($this->connections as $connection) {
+            if ($connection['worldUser'] != null) {
+                $connection['worldUser']->save();
+            }
         }
     }
 
@@ -281,6 +281,11 @@ class WebSocketsController extends Controller implements MessageComponentInterfa
             broadcast($user->id, $world->id, $this->connections, 0, 'user.disconnect', [
                 'user_id' => $user->id
             ]);
+        }
+
+        // If it had a world user save to be sure
+        if ($this->connections[$connection->resourceId]['worldUser'] != null) {
+            $this->connections[$connection->resourceId]['worldUser']->save();
         }
 
         // Remove connection

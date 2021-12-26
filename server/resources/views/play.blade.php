@@ -10,14 +10,17 @@
         <canvas id="game-canvas"></canvas>
 
         <div id="game" v-cloak>
+            <svg v-if="pointerlock" style="position:absolute;top:0;left:0;right:0;bottom:0;margin:auto;" width="24" height="24">
+                <rect fill="rgba(255, 255, 255, 0.9)" x="0" y="10" width="24" height="4" />
+                <rect fill="rgba(255, 255, 255, 0.9)" x="10" y="0" width="4" height="24" />
+            </svg>
+            <div v-else style="position:absolute;top:0;left:0;right:0;bottom:0;background-color:rgba(0,0,0,0.5);pointer-events:none"></div>
+
             <div class="m-3 p-3 has-background-light" style="position:absolute;top:0;left:0;border-radius:3px;">
                 <div v-if="connection.connected">
-                    <div class="menu mb-2">
-                        <p class="menu-label">@lang('play.users')</p>
-                    </div>
-                    <div style="display:flex" class="mt-3" v-for="user in sortedUsers" :key="user.id">
+                    <div style="display:flex" :class="{'mb-3': index != sortedUsers.length - 1}" v-for="user, index in sortedUsers" :key="user.id">
                         <div class="media-left mr-0">
-                            <div class="image is-medium is-round is-inline" :style="{backgroundImage: 'url(/storage/avatars/' + (user.avatar || 'default.png') + ')'}"></div>
+                        <div class="image is-medium is-round is-inline" :style="{backgroundImage: 'url(/storage/avatars/' + (user.avatar || 'default.png') + ')'}"></div>
                         </div>
                         <div class="media-content">
                             @{{ user.username }}
@@ -59,9 +62,10 @@
                 WEBSOCKETS_RECONNECT_TIMEOUT: @json(config('websockets.reconnect_timeout')),
 
                 PLAYER_HEIGHT: @json(config('game.player_height')),
-                CHAT_FADE_TIMEOUT: @json(config('game.chat_fade_time')),
+                PLAYER_MOVE_SEND_TIMEOUT: @json(config('game.player_move_send_timeout')),
+                CHAT_FADE_TIMEOUT: @json(config('game.chat_fade_timeout')),
 
-                worldId: @json(App\Models\World::where('name', 'PlaatWorld')->first()->id),
+                worldId: @json(request('world_id', App\Models\World::where('name', 'PlaatWorld')->first()->id)),
                 userId: @json(Auth::id()),
                 authToken: @json(explode('|', Auth::user()->authToken(), 2)[1])
             });
