@@ -11,6 +11,10 @@ class Texture extends Model
     use SoftDeletes;
 
     // Fields
+    protected $hidden = [
+        'deleted_at'
+    ];
+
     protected $attributes = [
         'name' => 'Untitled texture',
         'transparent' => false,

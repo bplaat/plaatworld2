@@ -11,6 +11,10 @@ class World extends Model
     use SoftDeletes;
 
     // Fields
+    protected $hidden = [
+        'deleted_at'
+    ];
+
     protected $attributes = [
         'name' => 'Untitled world',
         'width' => 50,

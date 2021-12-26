@@ -63,7 +63,7 @@ class Crud extends PaginationComponent
         }
 
         return view('livewire.admin.textures.crud', [
-            'textures' => $textures->paginate(4 * 4)->withQueryString()
+            'textures' => $textures->paginate(4 * config('pagination.web'))->withQueryString()
         ])->layout('layouts.app', ['title' => __('admin/textures.crud.title')]);
     }
 }

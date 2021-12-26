@@ -109,11 +109,12 @@
                 OBJECT_TYPE_CYLINDER: @json(App\Models\GameObject::TYPE_CYLINDER),
                 OBJECT_TYPE_SPHERE: @json(App\Models\GameObject::TYPE_SPHERE),
                 OBJECT_TYPE_PYRAMID: @json(App\Models\GameObject::TYPE_PYRAMID),
+
                 livewire: @this,
-                editorUser: @json($editorUser),
-                textures: @json(App\Models\Texture::all()),
-                objects: @json($objects),
-                world: @json($world)
+                editorUser: JSON.parse('@json($editorUser)'),
+                textures: JSON.parse('@json(App\Models\Texture::all())'),
+                objects: JSON.parse('@json($objects)'),
+                world: JSON.parse('@json($world)')
             });
         });
     </script>

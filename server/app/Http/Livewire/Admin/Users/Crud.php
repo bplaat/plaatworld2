@@ -76,7 +76,7 @@ class Crud extends PaginationComponent
         }
 
         return view('livewire.admin.users.crud', [
-            'users' => $users->paginate(4 * 4)->withQueryString()
+            'users' => $users->paginate(4 * config('pagination.web'))->withQueryString()
         ])->layout('layouts.app', ['title' => __('admin/users.crud.title')]);
     }
 }

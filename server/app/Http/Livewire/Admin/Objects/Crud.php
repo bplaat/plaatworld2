@@ -68,7 +68,7 @@ class Crud extends PaginationComponent
             $objects = $objects->orderBy('created_at');
         }
 
-        $objects = $objects->with('texture')->with('objects')->paginate(4 * 4)->withQueryString();
+        $objects = $objects->with('texture')->with('objects')->paginate(4 * config('pagination.web'))->withQueryString();
         for ($i = 0; $i < $objects->count(); $i++) {
             for ($j = 0; $j < $objects[$i]->objects->count(); $j++) {
                 $objects[$i]->objects[$j]->texture;

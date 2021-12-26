@@ -17,7 +17,13 @@
                 OBJECT_TYPE_CYLINDER: @json(App\Models\GameObject::TYPE_CYLINDER),
                 OBJECT_TYPE_SPHERE: @json(App\Models\GameObject::TYPE_SPHERE),
                 OBJECT_TYPE_PYRAMID: @json(App\Models\GameObject::TYPE_PYRAMID),
-                authToken: @json(Auth::user()->authToken())
+
+                WEBSOCKETS_URL: @json(config('websockets.url')),
+                WEBSOCKETS_RECONNECT_TIMEOUT: @json(config('websockets.reconnect_timeout')),
+
+                worldId: @json(App\Models\World::where('name', 'PlaatWorld')->first()->id),
+                userId: @json(Auth::id()),
+                authToken: @json(explode('|', Auth::user()->authToken(), 2)[1])
             });
         };
     </script>

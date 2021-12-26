@@ -380,6 +380,7 @@ function ObjectEditor(data) {
                         OBJECT_TYPE_CYLINDER: data.OBJECT_TYPE_CYLINDER,
                         OBJECT_TYPE_SPHERE: data.OBJECT_TYPE_SPHERE,
                         OBJECT_TYPE_PYRAMID: data.OBJECT_TYPE_PYRAMID,
+
                         canvas: document.getElementById('object-' + object.id + '-canvas'),
                         backgroundColor: getComputedStyle(document.getElementById('object-button')).backgroundColor,
                         canvasSize: () => 100,

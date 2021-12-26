@@ -21,6 +21,10 @@ class GameObject extends Model
     public const TYPE_PYRAMID = 6;
 
     // Fields
+    protected $hidden = [
+        'deleted_at'
+    ];
+
     protected $attributes = [
         'type' => GameObject::TYPE_SPRITE,
         'name' => 'Untitled object',

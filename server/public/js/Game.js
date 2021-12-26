@@ -1,7 +1,12 @@
 class Connection {
-    constructor() {
-        this.ws = new WebSocket('ws://localhost:8080/');
+    constructor(url, reconnectTimeout) {
+        this.url = url;
+        this.reconnectTimeout = reconnectTimeout;
         this.connected = false;
+    }
+
+    connect() {
+        this.ws = new WebSocket(this.url);
         this.ws.onopen = this.onOpen.bind(this);
         this.ws.onmessage = this.onMessage.bind(this);
         this.ws.onclose = this.onClose.bind(this);
@@ -11,10 +16,11 @@ class Connection {
 
     send(type, data, callback = null) {
         if (this.connected) {
+            const id = Date.now();
             if (callback != null) {
-                this.listeners.push({ type: type, callback: callback });
+                this.listeners.push({ id: id, type: type, callback: callback });
             }
-            this.ws.send(JSON.stringify({ type, data }));
+            this.ws.send(JSON.stringify({ id: id, type, data }));
         }
     }
 
@@ -27,11 +33,11 @@ class Connection {
     }
 
     onMessage(event) {
-        const { type, data } = JSON.parse(event.data);
+        const { id, type, data } = JSON.parse(event.data);
 
         // Resolve pending listeners
         for (const listener of this.listeners) {
-            if (listener + '.response' == type) {
+            if (listener.id == id) {
                 listener.callback(data);
             }
         }
@@ -41,6 +47,7 @@ class Connection {
     onClose() {
         this.connected = false;
         console.log('Ws close');
+        setTimeout(this.connect.bind(this), this.reconnectTimeout);
     }
 
     onError() {
@@ -48,16 +55,30 @@ class Connection {
     }
 }
 
-const connection = new Connection();
-connection.onConnected = () => {
-    connection.send('auth.login', {
-        'token': 'token'
-    });
-};
-
-
-
 function Game(data) {
+    // Create connection
+    const connection = new Connection(data.WEBSOCKETS_URL, data.WEBSOCKETS_RECONNECT_TIMEOUT);
+    connection.connect();
+    connection.onConnected = () => {
+        connection.send('auth.login', {
+            'token': data.authToken
+        }, message => {
+            if (message.success) {
+                connection.send('world.connect', {
+                    'world_id': data.worldId
+                }, message => {
+                    if (message.success) {
+                        console.log(message.world);
+                    } else {
+                        alert(JSON.stringify(message.errors));
+                    }
+                });
+            } else {
+                alert(JSON.stringify(message.errors));
+            }
+        });
+    };
+
     // Scene and camera
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, 0, 0.1, 1000);
@@ -73,7 +94,6 @@ function Game(data) {
     }
     window.addEventListener('resize', resize);
     resize();
-
 
     // Spawn cube
     const spawnGeometry = new THREE.BoxGeometry(1, 1, 1);

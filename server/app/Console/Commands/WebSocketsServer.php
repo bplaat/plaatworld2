@@ -8,7 +8,7 @@ use Ratchet\Server\IoServer;
 use Ratchet\Http\HttpServer;
 use Ratchet\WebSocket\WsServer;
 use React\EventLoop\Factory;
-use React\Socket\Server as Reactor;
+use React\Socket\Server;
 
 class WebSocketsServer extends Command
 {
@@ -45,12 +45,12 @@ class WebSocketsServer extends Command
     {
         $loop = Factory::create();
 
-        // Start websocket server
-        echo 'Starting websockets server: ws://localhost:8080/' . PHP_EOL;
+        // Start websockets server
+        echo 'Starting websockets server at: ws://' . config('websockets.host') . ':' . config('websockets.port') . '/' . PHP_EOL;
         $websocketsController = new WebSocketsController();
-        $server = new IoServer(
+        $websocketServer = new IoServer(
             new HttpServer(new WsServer($websocketsController)),
-            new Reactor('0.0.0.0:8080', $loop),
+            new Server(config('websockets.host') . ':' . config('websockets.port'), $loop),
             $loop
         );
 

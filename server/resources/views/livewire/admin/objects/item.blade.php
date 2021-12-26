@@ -39,10 +39,11 @@
                 OBJECT_TYPE_CYLINDER: @json(App\Models\GameObject::TYPE_CYLINDER),
                 OBJECT_TYPE_SPHERE: @json(App\Models\GameObject::TYPE_SPHERE),
                 OBJECT_TYPE_PYRAMID: @json(App\Models\GameObject::TYPE_PYRAMID),
+
                 canvas: document.getElementById('object-' + @json($object->id) + '-canvas'),
                 backgroundColor: getComputedStyle(document.querySelector('.card')).backgroundColor,
                 canvasSize: () => document.querySelector('.card-image').offsetWidth,
-                object: @json($object),
+                object: JSON.parse('@json($object)'),
                 animated: true
             });
         });
