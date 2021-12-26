@@ -46,11 +46,7 @@ class Editor extends Component
 
         // Get world object and its objects
         $this->world = $world;
-        for ($i = 0; $i < $this->world->objects->count(); $i++) {
-            if ($this->world->objects[$i]->type == GameObject::TYPE_GROUP) {
-                $this->world->objects[$i]->objects;
-            }
-        }
+        $this->world->objects;
     }
 
     public function saveWorld($data)

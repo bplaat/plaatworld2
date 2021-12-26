@@ -66,6 +66,8 @@
                 WEBSOCKETS_RECONNECT_TIMEOUT: @json(config('websockets.reconnect_timeout')),
 
                 PLAYER_HEIGHT: @json(config('game.player_height')),
+                PLAYER_WEIGHT: @json(config('game.player_weight')),
+                PLAYER_SPEED: @json(config('game.player_speed')),
                 PLAYER_MOVE_SEND_TIMEOUT: @json(config('game.player_move_send_timeout')),
                 CHAT_FADE_TIMEOUT: @json(config('game.chat_fade_timeout')),
 

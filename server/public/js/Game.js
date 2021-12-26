@@ -54,8 +54,8 @@ class Connection {
 let game;
 
 function Game(config) {
-    let user, world, textures, taunts, renderer, keys = {}, stats, scene, clock,
-        serverPosition, serverRotation, sendMoveTimeout = Date.now(), camera, sprites = [],
+    let user, world, groupObjects, textures, taunts, renderer, keys = {}, velocity = new THREE.Vector3(), canJump = true,
+        stats, scene, clock, serverPosition, serverRotation, sendMoveTimeout = Date.now(), camera, sprites = [],
         players = new THREE.Group(), meshes = new THREE.Group();
 
     const planeGeometry = new THREE.PlaneGeometry(1, 1);
@@ -89,7 +89,8 @@ function Game(config) {
         let mesh;
         if (object.type == config.OBJECT_TYPE_GROUP) {
             mesh = new THREE.Group();
-            for (const childObject of object.objects) {
+            const childObjects = groupObjects.find(otherObject => otherObject.id == object.id).objects;
+            for (const childObject of childObjects) {
                 const child = createMesh(childObject);
                 child.position.set(childObject.pivot.position_x, childObject.pivot.position_y + (childObject.type == config.OBJECT_TYPE_SPHERE ? childObject.height : childObject.height / 2), childObject.pivot.position_z);
                 child.rotation.set(childObject.pivot.rotation_x, childObject.pivot.rotation_y, childObject.pivot.rotation_z);
@@ -159,6 +160,7 @@ function Game(config) {
                                 if (data.success) {
                                     this.worldLoaded = true;
                                     world = data.world;
+                                    groupObjects = data.groupObjects;
                                     textures = data.textures;
                                     taunts = data.taunts;
                                     this.users = [];
@@ -375,6 +377,11 @@ function Game(config) {
                         chatInput.focus();
                     }
                 }
+
+                if (key == ' ' && canJump) {
+                    canJump = false;
+                    velocity.y += config.PLAYER_WEIGHT * 1.5;
+                }
             },
 
             rendererKeyup(event) {
@@ -385,18 +392,33 @@ function Game(config) {
 
             update(delta) {
                 // Camera position controls
-                if (this.pointerlock && world != undefined) {
-                    const cameraSpeed = 10;
-                    const oldCameraY = camera.position.y;
-                    if (keys['w']) camera.translateZ(-cameraSpeed * delta);
-                    if (keys['s']) camera.translateZ(cameraSpeed * delta);
-                    if (keys['a']) camera.translateX(-cameraSpeed * delta);
-                    if (keys['d']) camera.translateX(cameraSpeed * delta);
-                    camera.position.y = oldCameraY;
+                if (world != undefined) {
+                    velocity.z -= velocity.z * 10 * delta;
+                    velocity.x -= velocity.x * 10 * delta;
+                    velocity.y -= world.gravity * config.PLAYER_WEIGHT * delta;
+
+                    if (this.pointerlock) {
+                        if (keys['w'] || keys['arrowup']) velocity.z -= config.PLAYER_SPEED * delta;
+                        if (keys['s'] || keys['arrowdown']) velocity.z += config.PLAYER_SPEED * delta;
+                        if (keys['a'] || keys['arrowleft']) velocity.x -= config.PLAYER_SPEED * delta;
+                        if (keys['d'] || keys['arrowright']) velocity.x += config.PLAYER_SPEED * delta;
+                    }
+
+                    const oldY = camera.position.y;
+                    camera.translateX(velocity.x * delta);
+                    camera.translateZ(velocity.z * delta);
+                    camera.position.y = oldY;
+                    camera.position.y += velocity.y * delta;
                     if (camera.position.x < -world.width / 2) camera.position.x = -world.width / 2;
                     if (camera.position.x > world.width / 2) camera.position.x = world.width / 2;
                     if (camera.position.z < -world.height / 2) camera.position.z = -world.height / 2;
                     if (camera.position.z > world.height / 2) camera.position.z = world.height / 2;
+
+                    if (camera.position.y < config.PLAYER_HEIGHT) {
+                        velocity.y = 0;
+                        camera.position.y = config.PLAYER_HEIGHT;
+                        canJump = true;
+                    }
                 }
 
                 // Rotate sprites

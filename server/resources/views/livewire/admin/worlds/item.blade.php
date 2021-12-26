@@ -59,6 +59,17 @@
                                 @error('world.height') <p class="help is-danger">{{ $message }}</p> @enderror
                             </div>
                         </div>
+
+                        <div class="column">
+                            <div class="field">
+                                <label class="label" for="gravity">@lang('admin/worlds.item.gravity')</label>
+                                <div class="control">
+                                    <input class="input @error('world.gravity') is-danger @enderror" type="number" step="0.001" id="gravity"
+                                        wire:model.defer="world.gravity" required>
+                                </div>
+                                @error('world.gravity') <p class="help is-danger">{{ $message }}</p> @enderror
+                            </div>
+                        </div>
                     </div>
 
                     <div class="columns">

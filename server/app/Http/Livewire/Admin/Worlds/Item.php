@@ -15,6 +15,7 @@ class Item extends Component
         'world.name' => 'required|min:2|max:48',
         'world.width' => 'required|numeric|min:1',
         'world.height' => 'required|numeric|min:1',
+        'world.gravity' => 'required|numeric|min:0.001',
         'world.spawn_position_x' => 'required|numeric|min:0',
         'world.spawn_position_y' => 'required|numeric|min:0',
         'world.spawn_position_z' => 'required|numeric|min:0',

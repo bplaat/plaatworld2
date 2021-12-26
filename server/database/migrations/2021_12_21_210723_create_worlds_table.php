@@ -18,6 +18,7 @@ class CreateWorldsTable extends Migration
             $table->string('name');
             $table->double('width');
             $table->double('height');
+            $table->double('gravity');
             $table->double('spawn_position_x');
             $table->double('spawn_position_y');
             $table->double('spawn_position_z');

@@ -39,7 +39,8 @@ function WorldEditor(data) {
         let mesh;
         if (object.type == data.OBJECT_TYPE_GROUP) {
             mesh = new THREE.Group();
-            for (const childObject of object.objects) {
+            const childObjects = data.objects.find(otherObject => otherObject.id == object.id).objects;
+            for (const childObject of childObjects) {
                 const child = createMesh(childObject);
                 child.position.set(childObject.pivot.position_x, childObject.pivot.position_y + (childObject.type == data.OBJECT_TYPE_SPHERE ? childObject.height : childObject.height / 2), childObject.pivot.position_z);
                 child.rotation.set(childObject.pivot.rotation_x, childObject.pivot.rotation_y, childObject.pivot.rotation_z);

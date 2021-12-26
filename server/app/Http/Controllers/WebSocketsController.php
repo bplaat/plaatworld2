@@ -97,7 +97,7 @@ class WebSocketsController extends Controller implements MessageComponentInterfa
             }
 
             // Get user and send response response
-            $user = User::find($token->tokenable_id);
+            $user = User::where('id', $token->tokenable_id)->first();
             $this->connections[$connection->resourceId]['user'] = $user;
             send($connection, $id, $type . '.response', ['success' => true, 'user' => $user]);
         }
@@ -116,13 +116,8 @@ class WebSocketsController extends Controller implements MessageComponentInterfa
                 return;
             }
 
-            // Get world and all its objects and its child objects
+            // Get world and all its objects
             $world = World::where('id', $data->world_id)->with('objects')->first();
-            for ($i = 0; $i < $world->objects->count(); $i++) {
-                if ($world->objects[$i]->type == GameObject::TYPE_GROUP) {
-                    $world->objects[$i]->objects;
-                }
-            }
 
             // Check if user is authed and connected to a world
             $user = $this->connections[$connection->resourceId]['user'];
@@ -164,6 +159,7 @@ class WebSocketsController extends Controller implements MessageComponentInterfa
             send($connection, $id, $type . '.response', [
                 'success' => true,
                 'world' => $world,
+                'groupObjects' => GameObject::whereIn('id', $world->objects->filter(fn ($object) => $object->type == GameObject::TYPE_GROUP)->pluck('id'))->with('objects')->get(),
                 'textures' => Texture::all(),
                 'taunts' => Taunt::with('sound')->get()
             ]);

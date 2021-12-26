@@ -19,6 +19,7 @@ class World extends Model
         'name' => 'Untitled world',
         'width' => 50,
         'height' => 50,
+        'gravity' => 9.81,
         'spawn_position_x' => 0,
         'spawn_position_y' => 0,
         'spawn_position_z' => 0,
@@ -31,6 +32,7 @@ class World extends Model
     protected $casts = [
         'width' => 'double',
         'height' => 'double',
+        'gravity' => 'double',
         'spawn_position_x' => 'double',
         'spawn_position_y' => 'double',
         'spawn_position_z' => 'double',
