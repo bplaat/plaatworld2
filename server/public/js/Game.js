@@ -216,7 +216,7 @@ function Game(config) {
                         // Move camera to right position
                         if (data.user.id == config.userId) {
                             camera.position.set(data.position.x, data.position.y + config.PLAYER_HEIGHT, data.position.z);
-                            camera.rotation.set(data.rotation.x, data.rotation.y, data.rotation.z);
+                            camera.lookAt(camera.position.clone().add(new THREE.Vector3(data.rotation.x, data.rotation.y, data.rotation.z)));
                             serverPosition = { x: data.position.x, y: data.position.y, z: data.position.z };
                             serverRotation = { x: data.rotation.x, y: data.rotation.y, z: data.rotation.z };
                         }
@@ -225,18 +225,50 @@ function Game(config) {
                             const playerMesh = new THREE.Group();
                             playerMesh.userData = data.user;
                             playerMesh.position.set(data.position.x, data.position.y + config.PLAYER_HEIGHT / 2, data.position.z);
-                            playerMesh.rotation.y = data.rotation.y;
+                            const lookingPoint = playerMesh.position.clone().add(new THREE.Vector3(-data.rotation.x, -data.rotation.y, -data.rotation.z));
+                            playerMesh.rotation.y = Math.atan2(lookingPoint.x - playerMesh.position.x, lookingPoint.z - playerMesh.position.z);
                             players.add(playerMesh);
 
-                            const playerHeadMesh = new THREE.Mesh(boxGeometry, new THREE.MeshBasicMaterial({ color: 0xff0000 }));
-                            playerHeadMesh.position.y = config.PLAYER_HEIGHT - 1;
-                            playerHeadMesh.rotation.x = data.rotation.y;
-                            playerHeadMesh.rotation.z = data.rotation.z;
-                            playerHeadMesh.scale.set(0.75, 0.75, 0.75);
+                            // Player nameplate
+                            const namePlateCanvas = document.createElement('canvas');
+                            namePlateCanvas.width = 512;
+                            namePlateCanvas.height = 128;
+
+                            const context = namePlateCanvas.getContext('2d');
+                            context.fillStyle = '#fff';
+                            context.font = 'bold ' +  namePlateCanvas.width * 15 / 100 + 'px Merriweather';
+                            context.textAlign = 'center';
+                            context.textBaseline = 'middle';
+                            context.fillText(data.user.username, namePlateCanvas.width / 2, namePlateCanvas.height / 2);
+
+                            const namePlateMesh = new THREE.Mesh(new THREE.PlaneGeometry(1, 0.25), new THREE.MeshBasicMaterial({
+                                map: new THREE.CanvasTexture(namePlateCanvas),
+                                transparent: true,
+                                side: THREE.DoubleSide
+                            }));
+                            namePlateMesh.position.y = config.PLAYER_HEIGHT / 2 + 0.5;
+                            sprites.push(namePlateMesh);
+                            playerMesh.add(namePlateMesh);
+
+                            // Player head
+                            const playerHeadMaterial = new THREE.MeshBasicMaterial({
+                                map: new THREE.TextureLoader().load('/storage/avatars/' + (data.user.avatar || 'default.png')),
+                                side: THREE.DoubleSide
+                            });
+                            const playerHeadMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.05, 0.2, 32), playerHeadMaterial);
+                            playerHeadMesh.position.y = config.PLAYER_HEIGHT / 2 + 0.2 / 2;
+                            playerHeadMesh.rotation.set(-Math.PI / 2, -Math.PI / 2, 0);
                             playerMesh.add(playerHeadMesh);
 
-                            const playerBodyMesh = new THREE.Mesh(boxGeometry, new THREE.MeshBasicMaterial({ color: 0xffffff }));
-                            playerBodyMesh.scale.y = config.PLAYER_HEIGHT - 0.75;
+                            // Player body
+                            const playerBodyTexture = textures.find(texture => texture.name == 'Player');
+                            const playerBodyMaterial = new THREE.MeshBasicMaterial({
+                                map: new THREE.TextureLoader().load('/storage/textures/' + playerBodyTexture.image),
+                                transparent: true,
+                                side: THREE.DoubleSide
+                            });
+                            const playerBodyMesh = new THREE.Mesh(planeGeometry, playerBodyMaterial);
+                            playerBodyMesh.scale.y = config.PLAYER_HEIGHT;
                             playerMesh.add(playerBodyMesh);
                         }
                     }
@@ -248,6 +280,9 @@ function Game(config) {
                         if (user.id != config.userId) {
                             for (const player of players.children) {
                                 if (player.userData.id == user.id) {
+                                    for (const mesh of player.children) {
+                                        sprites.splice(sprites.indexOf(mesh), 1);
+                                    }
                                     player.removeFromParent();
                                     break;
                                 }
@@ -274,12 +309,10 @@ function Game(config) {
                                         .to({ x: user.position.x, y: user.position.y + config.PLAYER_HEIGHT / 2, z: user.position.z }, config.PLAYER_MOVE_SEND_TIMEOUT * 0.67)
                                         .easing(TWEEN.Easing.Quadratic.InOut)
                                         .start();
+
+                                    const lookingPoint = player.position.clone().add(new THREE.Vector3(-data.rotation.x, -data.rotation.y, -data.rotation.z));
                                     new TWEEN.Tween(player.rotation)
-                                        .to({ x: 0, y: user.rotation.y, z: 0 }, config.PLAYER_MOVE_SEND_TIMEOUT * 0.67)
-                                        .easing(TWEEN.Easing.Quadratic.InOut)
-                                        .start();
-                                    new TWEEN.Tween(player.children[0].rotation)
-                                        .to({ x: user.rotation.x, y: 0, z: user.rotation.z }, config.PLAYER_MOVE_SEND_TIMEOUT * 0.67)
+                                        .to({ x: 0, y: Math.atan2(lookingPoint.x - player.position.x, lookingPoint.z - player.position.z), z: 0 }, config.PLAYER_MOVE_SEND_TIMEOUT * 0.67)
                                         .easing(TWEEN.Easing.Quadratic.InOut)
                                         .start();
                                     break;
@@ -425,19 +458,21 @@ function Game(config) {
                 for (const sprite of sprites) {
                     const spritePosition = sprite.position.clone();
                     if (!('pivot' in sprite.userData)) sprite.parent.localToWorld(spritePosition);
-                    sprite.rotation.y = Math.atan2((camera.position.x - spritePosition.x), (camera.position.z - spritePosition.z)) -
+                    sprite.rotation.y = Math.atan2(camera.position.x - spritePosition.x, camera.position.z - spritePosition.z) -
                         (!('pivot' in sprite.userData) ? sprite.parent.rotation.y : 0);
                 }
 
                 // Send player position to server
                 if (serverPosition != undefined && serverRotation != undefined) {
                     if (Date.now() - sendMoveTimeout >= config.PLAYER_MOVE_SEND_TIMEOUT) {
+                        const cameraDirection = new THREE.Vector3();
+                        camera.getWorldDirection(cameraDirection);
                         if (
                             camera.position.x != serverPosition.x || camera.position.y - config.PLAYER_HEIGHT != serverPosition.y || camera.position.z != serverPosition.z ||
-                            camera.rotation.x != serverRotation.x || camera.rotation.y != serverRotation.y || camera.rotation.z != serverRotation.z
+                            cameraDirection.x != serverRotation.x || cameraDirection.y != serverRotation.y || cameraDirection.z != serverRotation.z
                         ) {
                             serverPosition = { x: camera.position.x, y: camera.position.y - config.PLAYER_HEIGHT, z: camera.position.z };
-                            serverRotation = { x: camera.rotation.x, y: camera.rotation.y, z: camera.rotation.z };
+                            serverRotation = { x: cameraDirection.x, y: cameraDirection.y, z: cameraDirection.z };
                             this.connection.send('user.move', { position: serverPosition, rotation: serverRotation });
                         }
                         sendMoveTimeout = Date.now()

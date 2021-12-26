@@ -102,7 +102,7 @@ function ObjectViewer(data) {
                 for (const sprite of sprites) {
                     const spritePosition = sprite.position.clone();
                     sprite.parent.localToWorld(spritePosition);
-                    sprite.rotation.y = Math.atan2((camera.position.x - spritePosition.x), (camera.position.z - spritePosition.z)) - sprite.parent.rotation.y;
+                    sprite.rotation.y = Math.atan2(camera.position.x - spritePosition.x, camera.position.z - spritePosition.z) - sprite.parent.rotation.y;
                 }
             }
 

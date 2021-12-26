@@ -425,7 +425,7 @@ function WorldEditor(data) {
                 for (const sprite of sprites) {
                     const spritePosition = sprite.position.clone();
                     if (!('pivot' in sprite.userData)) sprite.parent.localToWorld(spritePosition);
-                    sprite.rotation.y = Math.atan2((camera.position.x - spritePosition.x), (camera.position.z - spritePosition.z)) -
+                    sprite.rotation.y = Math.atan2(camera.position.x - spritePosition.x, camera.position.z - spritePosition.z) -
                         (!('pivot' in sprite.userData) ? sprite.parent.rotation.y : 0);
                     if ('pivot' in sprite.userData && this.selectedObjectId == sprite.userData.pivot.id) {
                         wireframe.rotation.set(sprite.rotation.x, sprite.rotation.y, sprite.rotation.z);

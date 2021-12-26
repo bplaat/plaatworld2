@@ -2,7 +2,6 @@
 
 # Todo List
 - v0.2.0:
-    - Better player meshes
     - Collision with objects
     - Editor chrome support (reus webgl canvases)
     - Add path and region object type

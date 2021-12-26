@@ -377,7 +377,7 @@ function ObjectEditor(data) {
                 for (const sprite of sprites) {
                     const position = new THREE.Vector3();
                     position.setFromMatrixPosition(sprite.matrixWorld);
-                    sprite.rotation.y = Math.atan2((camera.position.x - position.x), (camera.position.z - position.z));
+                    sprite.rotation.y = Math.atan2(camera.position.x - position.x, camera.position.z - position.z);
                     if ('pivot' in sprite.userData && this.selectedObjectId == sprite.userData.pivot.id) {
                         wireframe.rotation.set(sprite.rotation.x, sprite.rotation.y, sprite.rotation.z);
                     }
