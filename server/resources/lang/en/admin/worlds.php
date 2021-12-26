@@ -20,6 +20,8 @@ return [
     'crud.spawn_rotation_x' => 'Spawn rotation X (&deg;)',
     'crud.spawn_rotation_y' => 'Spawn rotation Y (&deg;)',
     'crud.spawn_rotation_z' => 'Spawn rotation Z (&deg;)',
+    'crud.active' => 'Active',
+    'crud.active_world' => 'Make world visible in the system',
     'crud.cancel' => 'Cancel',
 
     // Admin worlds item livewire component

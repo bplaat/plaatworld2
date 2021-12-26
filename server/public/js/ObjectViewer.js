@@ -39,6 +39,7 @@ function ObjectViewer(data) {
         return materials[texture.id];
     }
 
+    const sprites = [];
     function createMesh(object) {
         let mesh;
         if (object.type == data.OBJECT_TYPE_GROUP) {
@@ -53,6 +54,9 @@ function ObjectViewer(data) {
         if (object.type == data.OBJECT_TYPE_SPRITE || object.type == data.OBJECT_TYPE_FIXED_SPRITE) {
             mesh = new THREE.Mesh(planeGeometry, createMaterial(object.texture));
             mesh.scale.set(object.width, object.height, 0);
+            if (object.type == data.OBJECT_TYPE_SPRITE) {
+                sprites.push(mesh);
+            }
         }
         if (object.type == data.OBJECT_TYPE_CUBE) {
             mesh = new THREE.Mesh(boxGeometry, createMaterial(object.texture));
@@ -82,10 +86,22 @@ function ObjectViewer(data) {
         function loop() {
             window.requestAnimationFrame(loop);
             const delta = clock.getDelta();
+
+            // Rotate sprites when group
+            if (data.object.type == data.OBJECT_TYPE_GROUP) {
+                for (const sprite of sprites) {
+                    const spritePosition = sprite.position.clone();
+                    sprite.parent.localToWorld(spritePosition);
+                    sprite.rotation.y = Math.atan2((camera.position.x - spritePosition.x), (camera.position.z - spritePosition.z)) - sprite.parent.rotation.y;
+                }
+            }
+
+            // Rotate mesh
             if (data.object.type != data.OBJECT_TYPE_GROUP && data.object.type != data.OBJECT_TYPE_SPRITE && data.object.type != data.OBJECT_TYPE_FIXED_SPRITE) {
                 mesh.rotation.x += 0.5 * delta;
             }
             mesh.rotation.y += 1 * delta;
+
             renderer.render(scene, camera);
         }
         if (data.animated) {

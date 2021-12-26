@@ -29,8 +29,7 @@
         </div>
     </div>
 
-    <script wire:ignore src="/js/ObjectViewer.js"></script>
-    <script wire:ignore>
+    <script>
         document.addEventListener('livewire:load', () => {
             new ObjectViewer({
                 OBJECT_TYPE_GROUP: @json(App\Models\GameObject::TYPE_GROUP),

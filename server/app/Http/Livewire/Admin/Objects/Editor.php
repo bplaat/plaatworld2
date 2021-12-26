@@ -103,7 +103,7 @@ class Editor extends Component
     {
         return view('livewire.admin.objects.editor')->layout('layouts.app', [
             'title' => __('admin/objects.editor.title', ['object.name' => $this->object->name]),
-            'immersive' => true, 'vuejs' => true, 'threejs' => true, 'statsjs' => true
+            'immersive' => true, 'vuejs' => true, 'threejs' => true, 'statsjs' => true, 'objectviewerjs' => true, 'objecteditorjs' => true
         ]);
     }
 }

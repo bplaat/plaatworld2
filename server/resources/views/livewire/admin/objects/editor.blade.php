@@ -96,8 +96,6 @@
         </div>
     </div>
 
-    <script src="/js/ObjectViewer.js"></script>
-    <script src="/js/ObjectEditor.js"></script>
     <script>
         document.addEventListener('livewire:load', () => {
             new ObjectEditor({

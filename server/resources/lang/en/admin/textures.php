@@ -16,6 +16,8 @@ return [
     'crud.image_help' => 'You can upload an squared .jpg or .png image',
     'crud.transparent' => 'Transparent',
     'crud.transparent_texture' => 'The texture is partly transparent',
+    'crud.active' => 'Active',
+    'crud.active_texture' => 'Make texture visible in the system',
     'crud.cancel' => 'Cancel',
 
     // Admin textures item livewire component

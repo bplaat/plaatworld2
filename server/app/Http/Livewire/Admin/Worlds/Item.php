@@ -39,14 +39,14 @@ class Item extends Component
         $this->validate();
         $this->world->save();
         $this->isEditing = false;
-        $this->emitUp('refresh');
+        $this->emit('refresh');
     }
 
     public function deleteWorld()
     {
         $this->world->delete();
         $this->isDeleting = false;
-        $this->emitUp('refresh');
+        $this->emit('refresh');
     }
 
     public function render()

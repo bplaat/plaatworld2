@@ -145,6 +145,14 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="field">
+                        <label class="label" for="active">@lang('admin/users.crud.active')</label>
+                        <label class="checkbox" for="active">
+                            <input type="checkbox" id="active" wire:model.defer="user.active">
+                            @lang('admin/users.crud.active_user')
+                        </label>
+                    </div>
                 </div>
 
                 <div class="modal-card-foot">

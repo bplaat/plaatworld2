@@ -50,6 +50,18 @@
         </div>
     @endif
 
+    @if (isset($gamejs) && $gamejs)
+        <script src="/js/Game.js"></script>
+    @endif
+    @if (isset($objectviewerjs) && $objectviewerjs)
+        <script src="/js/ObjectViewer.js"></script>
+    @endif
+    @if (isset($worldeditorjs) && $worldeditorjs)
+        <script src="/js/WorldEditor.js"></script>
+    @endif
+    @if (isset($objecteditorjs) && $objecteditorjs)
+        <script src="/js/ObjectEditor.js"></script>
+    @endif
     <script src="/js/script.js?v={{ config('app.version') }}"></script>
     @livewireScripts
 </body>

@@ -24,6 +24,8 @@ return [
     'crud.theme' => 'Theme',
     'crud.theme_light' => 'Light',
     'crud.theme_dark' => 'Dark',
+    'crud.active' => 'Active',
+    'crud.active_user' => 'Make user visible in the system',
     'crud.cancel' => 'Cancel',
 
     // Admin users item livewire component

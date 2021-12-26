@@ -20,7 +20,8 @@ class Crud extends PaginationComponent
         'world.spawn_rotation_x' => 'required|numeric|min:0',
         'world.spawn_rotation_y' => 'required|numeric|min:0',
         'world.spawn_rotation_z' => 'required|numeric|min:0',
-        'world.sky_texture_id' => 'nullable|integer|exists:textures,id'
+        'world.sky_texture_id' => 'nullable|integer|exists:textures,id',
+        'world.active' => 'nullable|boolean'
     ];
 
     public function __construct() {

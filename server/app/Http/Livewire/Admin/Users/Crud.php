@@ -25,7 +25,8 @@ class Crud extends PaginationComponent
         'avatar' => 'nullable|image|mimes:jpg,jpeg,png|max:1024',
         'user.role' => 'required|integer|digits_between:' . User::ROLE_NORMAL . ',' . User::ROLE_ADMIN,
         'user.language' => 'required|integer|in:' . User::LANGUAGE_ENGLISH,
-        'user.theme' => 'required|integer|digits_between:' . User::THEME_LIGHT . ',' . User::THEME_DARK
+        'user.theme' => 'required|integer|digits_between:' . User::THEME_LIGHT . ',' . User::THEME_DARK,
+        'user.active' => 'nullable|boolean'
     ];
 
     public function mount()
