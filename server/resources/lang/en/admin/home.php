@@ -7,5 +7,7 @@ return [
     'users' => 'Users',
     'worlds' => 'Worlds',
     'textures' => 'Textures',
-    'objects' => 'Objects'
+    'objects' => 'Objects',
+    'sounds' => 'Sounds',
+    'taunts' => 'Taunts'
 ];

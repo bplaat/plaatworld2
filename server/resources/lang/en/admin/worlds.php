@@ -26,6 +26,7 @@ return [
 
     // Admin worlds item livewire component
     'item.inactive' => 'Inactive',
+    'item.play' => 'Play',
     'item.editor' => 'Editor',
     'item.edit' => 'Edit',
     'item.delete' => 'Delete',

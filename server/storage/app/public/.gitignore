@@ -3,4 +3,6 @@
 !avatars/default.png
 !textures/
 !textures/default.png
+!sounds/
+!sounds/.gitkeep
 !.gitignore

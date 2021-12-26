@@ -10,6 +10,7 @@
         </div>
 
         <div class="card-footer">
+            <a class="card-footer-item" href="{{ route('play') . '?world_id=' . $world->id }}">@lang('admin/worlds.item.play')</a>
             <a class="card-footer-item" href="{{ route('admin.worlds.editor', $world) }}">@lang('admin/worlds.item.editor')</a>
             <a class="card-footer-item" wire:click.prevent="$set('isEditing', true)">@lang('admin/worlds.item.edit')</a>
             <a class="card-footer-item has-text-danger" wire:click.prevent="$set('isDeleting', true)">@lang('admin/worlds.item.delete')</a>
