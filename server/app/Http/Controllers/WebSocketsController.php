@@ -274,7 +274,7 @@ class WebSocketsController extends Controller implements MessageComponentInterfa
     public function onClose(ConnectionInterface $connection) {
         echo 'Client disconnected' . PHP_EOL;
 
-        // If player was in world broadcast all users disconnect message
+        // If user was in world broadcast all users disconnect message
         $world = $this->connections[$connection->resourceId]['world'];
         if ($world != null) {
             $user = $this->connections[$connection->resourceId]['user'];

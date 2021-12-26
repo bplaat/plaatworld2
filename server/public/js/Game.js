@@ -53,7 +53,7 @@ class Connection {
 
 function Game(config) {
     let user, world, textures, renderer, keys = {}, stats, scene, clock,
-        serverPosition, serverRotation, sendMoveTimeout = Date.now(), camera, sprites = [];
+        serverPosition, serverRotation, sendMoveTimeout = Date.now(), camera, sprites = [], players = new THREE.Group();
     const meshes = new THREE.Group();
 
     const planeGeometry = new THREE.PlaneGeometry(1, 1);
@@ -134,7 +134,7 @@ function Game(config) {
             this.initRenderer();
             this.connect();
             clock = new THREE.Clock();
-            this.renderLoop();
+            window.requestAnimationFrame(this.renderLoop.bind(this));
         },
 
         computed: {
@@ -160,6 +160,7 @@ function Game(config) {
                                     textures = data.textures;
                                     this.users = [];
                                     this.chats = [];
+                                    players.clear();
 
                                     // Load world sky
                                     const skyTextureData = textures.find(texture => texture.id == world.sky_texture_id);
@@ -203,6 +204,8 @@ function Game(config) {
                     console.log(id, type, data);
 
                     if (type == 'user.connect') {
+                        data.user.position = { x: data.position.x, y: data.position.y, z: data.position.z };
+                        data.user.rotation = { x: data.rotation.x, y: data.rotation.y, z: data.rotation.z };
                         this.users.push(data.user);
 
                         // Move camera to right position
@@ -212,10 +215,74 @@ function Game(config) {
                             serverPosition = { x: data.position.x, y: data.position.y, z: data.position.z };
                             serverRotation = { x: data.rotation.x, y: data.rotation.y, z: data.rotation.z };
                         }
+                        // Create player mesh
+                        else {
+                            const playerMesh = new THREE.Group();
+                            playerMesh.userData = data.user;
+                            playerMesh.position.set(data.position.x, data.position.y + config.PLAYER_HEIGHT / 2, data.position.z);
+                            playerMesh.rotation.y = data.rotation.y;
+                            players.add(playerMesh);
+
+                            const playerHeadMesh = new THREE.Mesh(boxGeometry, new THREE.MeshBasicMaterial({ color: 0xff0000 }));
+                            playerHeadMesh.position.y = config.PLAYER_HEIGHT - 1;
+                            playerHeadMesh.rotation.x = data.rotation.y;
+                            playerHeadMesh.rotation.z = data.rotation.z;
+                            playerHeadMesh.scale.set(0.75, 0.75, 0.75);
+                            playerMesh.add(playerHeadMesh);
+
+                            const playerBodyMesh = new THREE.Mesh(boxGeometry, new THREE.MeshBasicMaterial({ color: 0xffffff }));
+                            playerBodyMesh.scale.y = config.PLAYER_HEIGHT - 0.75;
+                            playerMesh.add(playerBodyMesh);
+                        }
                     }
+
                     if (type == 'user.disconnect') {
+                        const user = this.users.find(user => user.id == data.user_id);
+
+                        // Remove player mesh
+                        if (user.id != config.userId) {
+                            for (const player of players.children) {
+                                if (player.userData.id == user.id) {
+                                    player.removeFromParent();
+                                    break;
+                                }
+                            }
+                        }
+
                         this.users = this.users.filter(user => user.id != data.user_id);
                     }
+
+                    if (type == 'user.move') {
+                        const user = this.users.find(user => user.id == data.user_id);
+                        user.position.x = data.position.x;
+                        user.position.y = data.position.y;
+                        user.position.z = data.position.z;
+                        user.rotation.x = data.rotation.x;
+                        user.rotation.y = data.rotation.y;
+                        user.rotation.z = data.rotation.z;
+
+                        // Move player mesh
+                        if (user.id != config.userId) {
+                            for (const player of players.children) {
+                                if (player.userData.id == user.id) {
+                                    new TWEEN.Tween(player.position)
+                                        .to({ x: user.position.x, y: user.position.y + config.PLAYER_HEIGHT / 2, z: user.position.z }, config.PLAYER_MOVE_SEND_TIMEOUT * 0.67)
+                                        .easing(TWEEN.Easing.Quadratic.InOut)
+                                        .start();
+                                    new TWEEN.Tween(player.rotation)
+                                        .to({ x: 0, y: user.rotation.y, z: 0 }, config.PLAYER_MOVE_SEND_TIMEOUT * 0.67)
+                                        .easing(TWEEN.Easing.Quadratic.InOut)
+                                        .start();
+                                    new TWEEN.Tween(player.children[0].rotation)
+                                        .to({ x: user.rotation.x, y: 0, z: user.rotation.z }, config.PLAYER_MOVE_SEND_TIMEOUT * 0.67)
+                                        .easing(TWEEN.Easing.Quadratic.InOut)
+                                        .start();
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
                     if (type == 'user.chat') {
                         data.chat.user = this.users.find(user => user.id == data.user_id);
                         this.chats.push(data.chat);
@@ -241,6 +308,7 @@ function Game(config) {
                 scene = new THREE.Scene();
                 scene.background = new THREE.Color(getComputedStyle(document.querySelector('.has-navbar-fixed-top')).backgroundColor);
                 scene.add(meshes);
+                scene.add(players);
 
                 // Camera
                 camera = new THREE.PerspectiveCamera(75, 0, 0.1, 1000);
@@ -338,10 +406,11 @@ function Game(config) {
                 }
             },
 
-            renderLoop() {
+            renderLoop(time) {
                 window.requestAnimationFrame(this.renderLoop.bind(this));
                 if ('Stats' in window) stats.begin();
                 this.update(clock.getDelta());
+                TWEEN.update(time);
                 renderer.render(scene, camera);
                 if ('Stats' in window) stats.end();
             },

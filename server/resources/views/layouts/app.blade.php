@@ -29,6 +29,9 @@
     @if (isset($statsjs) && $statsjs && config('app.debug') == true)
         <script src="/js/stats.min.js"></script>
     @endif
+    @if (isset($tweenjs) && $tweenjs)
+        <script src="/js/tween.min.js"></script>
+    @endif
 </head>
 <body>
     @include('layouts.navbar')

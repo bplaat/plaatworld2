@@ -4,6 +4,7 @@
     @slot('vuejs', true)
     @slot('threejs', true)
     @slot('statsjs', true)
+    @slot('tweenjs', true)
     @slot('gamejs', true)
 
     <div class="immersive">
