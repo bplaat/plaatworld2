@@ -3,7 +3,7 @@ const radians = deg => (deg * Math.PI) / 180;
 
 function WorldEditor(data) {
     let renderer, mouse = { drag: false, button: 0, x: 0, y: 0 }, keys = {},
-        stats, scene, skyboxBackground, pageBackground, clock, camera, sprites = [], wireframe;
+        stats, scene, skyboxBackground, pageBackground, ground, clock, camera, sprites = [], wireframe;
     const meshes = new THREE.Group();
 
     const planeGeometry = new THREE.PlaneGeometry(1, 1);
@@ -256,7 +256,7 @@ function WorldEditor(data) {
                 groundMaterial.map.repeat.set(data.world.width / 5, data.world.height / 5);
                 groundMaterial.map.wrapS = THREE.RepeatWrapping;
                 groundMaterial.map.wrapT = THREE.RepeatWrapping;
-                const ground = new THREE.Mesh(planeGeometry, groundMaterial);
+                ground = new THREE.Mesh(planeGeometry, groundMaterial);
                 ground.scale.x = data.world.width;
                 ground.scale.y = data.world.height;
                 ground.rotation.x = -Math.PI / 2;
@@ -338,12 +338,21 @@ function WorldEditor(data) {
             rendererMouseup(event) {
                 mouse.drag = false;
                 if (Math.sqrt((event.clientX - mouse.x) ** 2 + (event.clientY - mouse.y) ** 2) < 4) {
-                    const intersects = this.sendRaycaster(meshes.children, event.clientX, event.clientY);
-                    if (intersects.length > 0) {
-                        if ('pivot' in intersects[0].object.userData) {
-                            this.selectObjectId(intersects[0].object.userData.pivot.id);
-                        } else if ('pivot' in intersects[0].object.parent.userData) {
-                            this.selectObjectId(intersects[0].object.parent.userData.pivot.id);
+                    if (mouse.button == 1 && this.selectedObjectId != null) {
+                        const intersects = this.sendRaycaster([ ground ], event.clientX, event.clientY);
+                        if (intersects.length > 0) {
+                            this.selectedObject.position_x = intersects[0].point.x;
+                            this.selectedObject.position_y = 0;
+                            this.selectedObject.position_z = intersects[0].point.z;
+                        }
+                    } else {
+                        const intersects = this.sendRaycaster(meshes.children, event.clientX, event.clientY);
+                        if (intersects.length > 0) {
+                            const mesh = intersects[0].object;
+                            const userData = 'pivot' in mesh.parent.userData ? mesh.parent.userData : mesh.userData;
+                            this.selectObjectId(userData.pivot.id);
+                        } else {
+                            this.selectedObjectId = null;
                         }
                     }
                 }
