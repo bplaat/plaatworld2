@@ -149,8 +149,8 @@ function Game(config) {
             connect() {
                 // Create connection
                 this.connection = new Connection(config.WEBSOCKETS_URL, config.WEBSOCKETS_RECONNECT_TIMEOUT);
-                this.connection.connect();
                 this.connection.onConnected = () => {
+                    console.log('Send auth token...');
                     this.connection.send('auth.login', { 'token': config.authToken }, data => {
                         if (data.success) {
                             user = data.user;
@@ -198,10 +198,11 @@ function Game(config) {
                             alert(JSON.stringify(data.errors));
                         }
                     });
+                    this.connection.connect();
                 };
 
                 this.connection.onMessage = (id, type, data) => {
-                    console.log(id, type, data);
+                    // console.log(id, type, data);
 
                     if (type == 'user.connect') {
                         data.user.position = { x: data.position.x, y: data.position.y, z: data.position.z };
