@@ -127,6 +127,7 @@ function Game(config) {
         data: {
             connection: new Connection(config.WEBSOCKETS_URL, config.WEBSOCKETS_RECONNECT_TIMEOUT),
             pointerlock: false,
+            worldLoaded: false,
             users: [],
             chatMessage: '',
             chats: []
@@ -151,12 +152,12 @@ function Game(config) {
             connect() {
                 // Connection handlers
                 this.connection.onConnected = () => {
-                    console.log('Send auth token...');
                     this.connection.send('auth.login', { 'token': config.authToken }, data => {
                         if (data.success) {
                             user = data.user;
                             this.connection.send('world.connect', { 'world_id': config.worldId }, data => {
                                 if (data.success) {
+                                    this.worldLoaded = true;
                                     world = data.world;
                                     textures = data.textures;
                                     this.users = [];

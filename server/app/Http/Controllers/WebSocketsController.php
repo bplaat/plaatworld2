@@ -59,10 +59,11 @@ class WebSocketsController extends Controller implements MessageComponentInterfa
         // Validate basic incomming message
         $validation = Validator::make(['message' => $message, 'id' => json_decode($message)->id, 'type' => json_decode($message)->type], [
             'message' => 'required|json',
-            'id' => 'required|integer|min:0',
+            'id' => 'required|numeric|min:0',
             'type' => 'required|string'
         ]);
         if ($validation->fails()) {
+            print_r($validation->errors());
             return;
         }
 

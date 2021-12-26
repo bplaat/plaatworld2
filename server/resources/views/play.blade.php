@@ -19,14 +19,17 @@
 
             <div class="m-3 p-3 has-background-light" style="position:absolute;top:0;left:0;border-radius:3px;">
                 <div v-if="connection.connected">
-                    <div style="display:flex" :class="{'mb-3': index != sortedUsers.length - 1}" v-for="user, index in sortedUsers" :key="user.id">
-                        <div class="media-left mr-0">
-                        <div class="image is-medium is-round is-inline" :style="{backgroundImage: 'url(/storage/avatars/' + (user.avatar || 'default.png') + ')'}"></div>
-                        </div>
-                        <div class="media-content">
-                            @{{ user.username }}
+                    <div v-if="worldLoaded">
+                        <div style="display:flex" :class="{'mb-3': index != sortedUsers.length - 1}" v-for="user, index in sortedUsers" :key="user.id">
+                            <div class="media-left mr-0">
+                            <div class="image is-medium is-round is-inline" :style="{backgroundImage: 'url(/storage/avatars/' + (user.avatar || 'default.png') + ')'}"></div>
+                            </div>
+                            <div class="media-content">
+                                @{{ user.username }}
+                            </div>
                         </div>
                     </div>
+                    <p v-else><i>@lang('play.loading')</i></p>
                 </div>
                 <p v-else><i>@lang('play.connecting')</i></p>
             </div>
