@@ -3,7 +3,7 @@ const radians = deg => (deg * Math.PI) / 180;
 
 function WorldEditor(data) {
     let renderer, mouse = { drag: false, button: 0, x: 0, y: 0 }, keys = {}, stats, scene,
-        skyboxBackground, editorBackground, clock, camera, sprites = [], wireframe;
+        skyboxBackground, pageBackground, clock, camera, sprites = [], wireframe;
     const meshes = new THREE.Group();
 
     const planeGeometry = new THREE.PlaneGeometry(1, 1);
@@ -100,7 +100,7 @@ function WorldEditor(data) {
 
         watch: {
             'skybox': function (skybox) {
-                scene.background = skybox ? skyboxBackground : editorBackground;
+                scene.background = skybox ? skyboxBackground : pageBackground;
             },
 
             selectedObjectId() {
@@ -191,7 +191,7 @@ function WorldEditor(data) {
                 window.addEventListener('keyup', this.rendererKeyup.bind(this));
 
                 // Scene
-                editorBackground = new THREE.Color(getComputedStyle(document.querySelector('.has-navbar-fixed-top')).backgroundColor);
+                pageBackground = new THREE.Color(getComputedStyle(document.querySelector('.has-navbar-fixed-top')).backgroundColor);
                 const skyTextureData = data.textures.find(texture => texture.id == this.world.sky_texture_id);
                 if (skyTextureData != null) {
                     const skyTexture = new THREE.TextureLoader().load('/storage/textures/' + skyTextureData.image, () => {
@@ -201,11 +201,11 @@ function WorldEditor(data) {
                         if (this.skybox) scene.background = skyboxBackground;
                     });
                 } else {
-                    skyboxBackground = editorBackground;
+                    skyboxBackground = pageBackground;
                 }
 
                 scene = new THREE.Scene();
-                scene.background = editorBackground;
+                scene.background = pageBackground;
                 scene.add(meshes);
 
                 // Camera
@@ -241,7 +241,7 @@ function WorldEditor(data) {
 
                 // Spawn
                 const spawn = new THREE.Mesh(boxGeometry, new THREE.MeshNormalMaterial());
-                spawn.position.set(data.world.spawn_position_x, data.world.spawn_position_y + 1.5, data.world.spawn_position_z);
+                spawn.position.set(data.world.spawn_position_x, data.world.spawn_position_y + data.PLAYER_HEIGHT, data.world.spawn_position_z);
                 spawn.rotation.set(data.world.spawn_rotation_x, data.world.spawn_rotation_y, data.world.spawn_rotation_z);
                 spawn.scale.set(0.5, 0.5, 0.5);
                 scene.add(spawn);
@@ -342,12 +342,7 @@ function WorldEditor(data) {
                 keys[key] = false;
             },
 
-            renderLoop() {
-                window.requestAnimationFrame(this.renderLoop.bind(this));
-                if ('Stats' in window) stats.begin();
-
-                const delta = clock.getDelta();
-
+            update(delta) {
                 // Check key input
                 if (this.selectedObjectId != null) {
                     const object = this.world.objects.find(object => object.pivot.id == this.selectedObjectId);
@@ -399,7 +394,12 @@ function WorldEditor(data) {
                         wireframe.rotation.set(sprite.rotation.x, sprite.rotation.y, sprite.rotation.z);
                     }
                 }
+            },
 
+            renderLoop() {
+                window.requestAnimationFrame(this.renderLoop.bind(this));
+                if ('Stats' in window) stats.begin();
+                this.update(clock.getDelta());
                 renderer.render(scene, camera);
                 if ('Stats' in window) stats.end();
             },

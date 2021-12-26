@@ -110,6 +110,8 @@
                 OBJECT_TYPE_SPHERE: @json(App\Models\GameObject::TYPE_SPHERE),
                 OBJECT_TYPE_PYRAMID: @json(App\Models\GameObject::TYPE_PYRAMID),
 
+                PLAYER_HEIGHT: @json(config('game.player_height')),
+
                 livewire: @this,
                 editorUser: JSON.parse('@json($editorUser)'),
                 textures: JSON.parse('@json(App\Models\Texture::all())'),

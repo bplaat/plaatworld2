@@ -6,6 +6,7 @@
     - Real fps gameview of a world
     - You see other players in world and move
     - Player chat (saved in database)
+    - Simple taunts system
 - v0.2.0:
     - Add path and region object type
     - Path and region points editor in world editor

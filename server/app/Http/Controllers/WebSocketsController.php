@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\GameObject;
 use App\Models\Texture;
 use App\Models\User;
 use App\Models\World;
@@ -113,8 +114,13 @@ class WebSocketsController extends Controller implements MessageComponentInterfa
                 return;
             }
 
-            // Get world and all its objects
+            // Get world and all its objects and its child objects
             $world = World::where('id', $data->world_id)->with('objects')->first();
+            for ($i = 0; $i < $world->objects->count(); $i++) {
+                if ($world->objects[$i]->type == GameObject::TYPE_GROUP) {
+                    $world->objects[$i]->objects;
+                }
+            }
 
             // Check if user is authed and connected to a world
             $user = $this->connections[$connection->resourceId]['user'];
@@ -249,15 +255,19 @@ class WebSocketsController extends Controller implements MessageComponentInterfa
                 return;
             }
 
-            // Broadcast message
-            broadcast($user->id, $world->id, $this->connections, $id, $type, ['user_id' => $user->id, 'message' => $data->message]);
-
             // Save chat message
             $worldChat = new WorldChat();
             $worldChat->world_id = $world->id;
             $worldChat->user_id = $user->id;
             $worldChat->message = $data->message;
             $worldChat->save();
+
+            // Broadcast message
+            broadcast($user->id, $world->id, $this->connections, $id, $type, ['user_id' => $user->id, 'chat' => $worldChat]);
+
+            // Send response message
+            send($connection, $id, $type . '.response', ['success' => true, 'chat' => $worldChat]);
+
         }
     }
 
@@ -279,7 +289,7 @@ class WebSocketsController extends Controller implements MessageComponentInterfa
 
     public function onError(ConnectionInterface $connection, \Exception $error) {
         // When an error happens close the connection
-        echo 'Server error: ' . $error->getMessage() . PHP_EOL;
+        echo 'Server error: ' . $error->getTraceAsString() . PHP_EOL;
         $connection->close();
     }
 }

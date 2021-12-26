@@ -298,12 +298,7 @@ function ObjectEditor(data) {
                 keys[key] = false;
             },
 
-            renderLoop() {
-                window.requestAnimationFrame(this.renderLoop.bind(this));
-                if ('Stats' in window) stats.begin();
-
-                const delta = clock.getDelta();
-
+            update(delta) {
                 // Check key input
                 if (this.selectedObjectId != null) {
                     const object = this.object.objects.find(object => object.pivot.id == this.selectedObjectId);
@@ -354,7 +349,12 @@ function ObjectEditor(data) {
                         wireframe.rotation.set(sprite.rotation.x, sprite.rotation.y, sprite.rotation.z);
                     }
                 }
+            },
 
+            renderLoop() {
+                window.requestAnimationFrame(this.renderLoop.bind(this));
+                if ('Stats' in window) stats.begin();
+                this.update(clock.getDelta());
                 renderer.render(scene, camera);
                 if ('Stats' in window) stats.end();
             },
