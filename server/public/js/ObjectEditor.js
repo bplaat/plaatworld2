@@ -209,7 +209,7 @@ function ObjectEditor(data) {
                 camera.updateProjectionMatrix();
                 renderer.setSize(window.innerWidth, height);
 
-                stats.dom.style.bottom = (16 + document.getElementById('objects-selector').offsetHeight) + 'px';
+                if ('Stats' in window) stats.dom.style.bottom = (16 + document.getElementById('objects-selector').offsetHeight) + 'px';
             },
 
             sendRaycaster(children, x, y) {
