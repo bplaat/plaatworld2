@@ -54,7 +54,7 @@ class Connection {
 let game;
 
 function Game(config) {
-    let user, world, groupObjects, textures, taunts, renderer, keys = {}, velocity = new THREE.Vector3(), canJump = true,
+    let world, groupObjects, textures, taunts, renderer, keys = {}, velocity = new THREE.Vector3(), canJump = true,
         stats, scene, clock, serverPosition, serverRotation, sendMoveTimeout = Date.now(), camera, sprites = [],
         players = new THREE.Group(), meshes = new THREE.Group();
 
@@ -129,6 +129,7 @@ function Game(config) {
             connection: new Connection(config.WEBSOCKETS_URL, config.WEBSOCKETS_RECONNECT_TIMEOUT),
             pointerlock: false,
             worldLoaded: false,
+            user: undefined,
             users: [],
             chatMessage: '',
             chats: []
@@ -155,7 +156,7 @@ function Game(config) {
                 this.connection.onConnected = () => {
                     this.connection.send('auth.login', { 'token': config.authToken }, data => {
                         if (data.success) {
-                            user = data.user;
+                            this.user = data.user;
                             this.connection.send('world.connect', { 'world_id': config.worldId }, data => {
                                 if (data.success) {
                                     this.worldLoaded = true;
@@ -520,7 +521,7 @@ function Game(config) {
                 document.getElementById('chat-input').blur();
                 this.connection.send('user.chat', { user_id: config.userId, message: this.chatMessage }, data => {
                     if (data.success) {
-                        data.chat.user = user;
+                        data.chat.user = this.user;
                         this.handleChat(data.chat);
                         this.chatMessage = '';
                     }

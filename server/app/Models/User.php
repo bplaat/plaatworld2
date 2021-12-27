@@ -48,7 +48,7 @@ class User extends Authenticatable
     // A user belongs to many items
     public function items()
     {
-        return $this->belongsToMany(Item::class)->withPivot('amount')->withTimestamps();
+        return $this->belongsToMany(Item::class, 'user_item')->withPivot('position_x', 'position_y', 'amount')->withTimestamps();
     }
 
     // Generate a random avatar name
@@ -78,5 +78,36 @@ class User extends Authenticatable
         return $query->where('username', 'LIKE', '%' . $searchQuery . '%')
             ->orWhere('email', 'LIKE', '%' . $searchQuery . '%')
             ->orWhere('created_at', 'LIKE', '%' . $searchQuery . '%');
+    }
+
+    // Add item to user
+    public function addItem($item, $amount) {
+        $userItems = UserItem::where('user_id', $this->id)->get();
+        for ($y = 0; $y < 4; $y++) {
+            for ($x = 0; $x < 10; $x++) {
+                $userItem = $userItems->first(fn ($userItem) => $userItem->position_x == $x && $userItem->position_y == $y);
+                if ($userItem != null) {
+                    if ($userItem->item_id == $item->id && $userItem->amount < $item->stackability) {
+                        $oldAmount = $userItem->amount;
+                        $userItem->amount = min($item->stackability, $oldAmount + $amount);
+                        $userItem->save();
+                        $amount -= $userItem->amount - $oldAmount;
+                    }
+                } else {
+                    $userItem = new UserItem();
+                    $userItem->user_id = $this->id;
+                    $userItem->item_id = $item->id;
+                    $userItem->position_x = $x;
+                    $userItem->position_y = $y;
+                    $userItem->amount = min($item->stackability, $amount);
+                    $userItem->save();
+                    $amount -= $userItem->amount;
+                }
+
+                if ($amount == 0) {
+                    return;
+                }
+            }
+        }
     }
 }

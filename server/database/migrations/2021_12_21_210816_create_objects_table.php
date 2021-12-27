@@ -23,6 +23,9 @@ class CreateObjectsTable extends Migration
             $table->unsignedBigInteger('texture_id')->nullable();
             $table->integer('texture_repeat_x');
             $table->integer('texture_repeat_y');
+            $table->unsignedBigInteger('item_id')->nullable();
+            $table->unsignedInteger('item_chance');
+            $table->unsignedInteger('item_amount');
             $table->boolean('active');
             $table->timestamps();
             $table->softDeletes();
@@ -30,6 +33,10 @@ class CreateObjectsTable extends Migration
             $table->foreign('texture_id')
                 ->references('id')
                 ->on('textures');
+
+            $table->foreign('item_id')
+                ->references('id')
+                ->on('items');
         });
     }
 

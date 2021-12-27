@@ -30,11 +30,14 @@ return [
 
     // Admin users item livewire component
     'item.inactive' => 'Inactive',
-    'item.balance' => 'Balance',
-    'item.hijack' => 'Hijack',
     'item.show' => 'Show',
     'item.edit' => 'Edit',
+    'item.hijack' => 'Hijack',
     'item.delete' => 'Delete',
+    'item.show_user' => 'Show user',
+    'item.inventory' => 'Inventory',
+    'item.add_amount' => 'Item amount...',
+    'item.add_item' => 'Add item',
     'item.edit_user' => 'Edit user',
     'item.username' => 'Username',
     'item.email' => 'Email address',

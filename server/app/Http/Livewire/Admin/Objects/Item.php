@@ -18,8 +18,11 @@ class Item extends Component
         'object.height' => 'required|numeric|min:0.001',
         'object.depth' => 'required|numeric|min:0',
         'object.texture_id' => 'nullable|integer|exists:textures,id',
-        'object.texture_repeat_x' => 'integer',
-        'object.texture_repeat_y' => 'integer',
+        'object.texture_repeat_x' => 'required|integer|min:1',
+        'object.texture_repeat_y' => 'required|integer|min:1',
+        'object.item_id' => 'nullable|integer|exists:items,id',
+        'object.item_chance' => 'required|integer|min:1',
+        'object.item_amount' => 'required|integer|min:1',
         'object.active' => 'nullable|boolean'
     ];
 
@@ -29,6 +32,9 @@ class Item extends Component
     {
         if ($name == 'item_texture') {
             $this->object->texture_id = $value;
+        }
+        if ($name == 'item_item') {
+            $this->object->item_id = $value;
         }
     }
 

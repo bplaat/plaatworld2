@@ -13,7 +13,7 @@ class Crud extends PaginationComponent
     public $rules = [
         'item.name' => 'required|min:1|max:32',
         'item.stackability' => 'required|integer|min:1',
-        'item.texture_id' => 'nullable|integer|exists:texture,id',
+        'item.texture_id' => 'nullable|integer|exists:textures,id',
         'item.active' => 'nullable|boolean'
     ];
 

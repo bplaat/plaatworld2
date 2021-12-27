@@ -33,6 +33,8 @@ class GameObject extends Model
         'depth' => 0,
         'texture_repeat_x' => 1,
         'texture_repeat_y' => 1,
+        'item_chance' => 1,
+        'item_amount' => 1,
         'active' => true
     ];
 

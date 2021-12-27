@@ -58,8 +58,16 @@ class WebSocketsController extends Controller implements MessageComponentInterfa
 
     public function onMessage(ConnectionInterface $connection, $message) {
         // Validate basic incomming message
-        $validation = Validator::make(['message' => $message, 'id' => json_decode($message)->id, 'type' => json_decode($message)->type], [
-            'message' => 'required|json',
+        $validation = Validator::make(['message' => $message], [
+            'message' => 'required|json'
+        ]);
+        if ($validation->fails()) {
+            print_r($validation->errors());
+            return;
+        }
+
+        $message = json_decode($message);
+        $validation = Validator::make(['id' => $message->id, 'type' => $message->type], [
             'id' => 'required|numeric|min:0',
             'type' => 'required|string'
         ]);
@@ -69,7 +77,6 @@ class WebSocketsController extends Controller implements MessageComponentInterfa
         }
 
         // Parse message
-        $message = json_decode($message);
         $id = $message->id;
         $type = $message->type;
         $data = $message->data;

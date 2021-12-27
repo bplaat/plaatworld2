@@ -17,5 +17,12 @@ return [
     'sound_chooser.search_sound' => 'Search an sound...',
     'sound_chooser.search_by_sound' => 'Search by sound...',
     'sound_chooser.empty' => 'No sounds found!',
-    'sound_chooser.empty_error' => 'You must select an sound'
+    'sound_chooser.empty_error' => 'You must select an sound',
+
+    // Item Chooser livewire component
+    'item_chooser.item' => 'Item',
+    'item_chooser.search_item' => 'Search an item...',
+    'item_chooser.search_by_item' => 'Search by item...',
+    'item_chooser.empty' => 'No items found!',
+    'item_chooser.empty_error' => 'You must select an item'
 ];

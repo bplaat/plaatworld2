@@ -148,6 +148,32 @@
                         </div>
                     </div>
 
+                    <livewire:components.item-chooser name="item_item" :itemId="$object->item_id" includeInactive="true" />
+
+                    <div class="columns">
+                        <div class="column">
+                            <div class="field">
+                                <label class="label" for="item_chance">@lang('admin/objects.crud.item_chance')</label>
+                                <div class="control">
+                                    <input class="input @error('object.item_chance') is-danger @enderror" type="number" step="1" id="item_chance"
+                                        wire:model.defer="object.item_chance" required>
+                                </div>
+                                @error('object.item_chance') <p class="help is-danger">{{ $message }}</p> @enderror
+                            </div>
+                        </div>
+
+                        <div class="column">
+                            <div class="field">
+                                <label class="label" for="item_amount">@lang('admin/objects.crud.item_amount')</label>
+                                <div class="control">
+                                    <input class="input @error('object.item_amount') is-danger @enderror" type="number" step="1" id="item_amount"
+                                        wire:model.defer="object.item_amount" required>
+                                </div>
+                                @error('object.item_amount') <p class="help is-danger">{{ $message }}</p> @enderror
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="field">
                         <label class="label" for="active">@lang('admin/objects.item.active')</label>
                         <label class="checkbox" for="active">

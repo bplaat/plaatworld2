@@ -23,6 +23,7 @@
         </div>
 
         <div class="card-footer">
+            <a class="card-footer-item" wire:click.prevent="$set('isShowing', true)">@lang('admin/users.item.show')</a>
             <a class="card-footer-item" wire:click.prevent="$set('isEditing', true)">@lang('admin/users.item.edit')</a>
             @if ($user->id != Auth::id())
                 <a class="card-footer-item has-text-danger" wire:click.prevent="hijackUser">@lang('admin/users.item.hijack')</a>
@@ -30,6 +31,60 @@
             <a class="card-footer-item has-text-danger" wire:click.prevent="$set('isDeleting', true)">@lang('admin/users.item.delete')</a>
         </div>
     </div>
+
+    @if ($isShowing)
+        <div class="modal is-active">
+            <div class="modal-background" wire:click="$set('isShowing', false)"></div>
+
+            <div class="modal-card">
+                <div class="modal-card-head">
+                    <p class="modal-card-title">@lang('admin/users.item.show_user')</p>
+                    <button type="button" class="delete" wire:click="$set('isShowing', false)"></button>
+                </div>
+
+                <div class="modal-card-body content">
+                    <h1 class="title is-spaced is-4">
+                        {{ $user->username }}
+
+                        <span class="is-pulled-right is-hidden-mobile">
+                            @if ($user->role == App\Models\User::ROLE_NORMAL)
+                                <span class="tag is-success">{{ Str::upper(__('admin/users.item.role_normal')) }}</span>
+                            @endif
+
+                            @if ($user->role == App\Models\User::ROLE_ADMIN)
+                                <span class="tag is-danger">{{ Str::upper(__('admin/users.item.role_admin')) }}</span>
+                            @endif
+
+                            @if (!$user->active)
+                                <span class="tag is-warning">{{ Str::upper(__('admin/users.item.inactive')) }}</span>
+                            @endif
+                        </span>
+                    </h1>
+
+                    <div class="box">
+                        <h2 class="title is-spaced is-5">@lang('admin/users.item.inventory')</h2>
+
+                        <x-user-inventory :user="$user" />
+
+                        <form wire:submit.prevent="addItem">
+                            <div class="field has-addons is-block-mobile">
+                                <livewire:components.item-chooser name="add_item" inline="true" includeInactive="true" />
+
+                                <div class="control" style="width: 100%;">
+                                    <input class="input @error('addItemAmount') is-danger @enderror" type="number" step="1" placeholder="@lang('admin/users.item.add_amount')"
+                                        wire:model.defer="addItemAmount" required>
+                                </div>
+
+                                <div class="control">
+                                    <button class="button is-link" type="submit" style="width: 100%;">@lang('admin/users.item.add_item')</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
 
     @if ($isEditing)
         <div class="modal is-active">

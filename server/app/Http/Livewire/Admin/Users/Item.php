@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Admin\Users;
 
+use App\Models\Item as GameItem;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -18,6 +19,8 @@ class Item extends Component
     public $newPassword;
     public $newPasswordConfirmation;
     public $avatar;
+    public $addItemId;
+    public $addItemAmount;
     public $isShowing = false;
     public $isEditing = false;
     public $isDeleting = false;
@@ -40,6 +43,27 @@ class Item extends Component
             'user.theme' => 'required|integer|digits_between:' . User::THEME_LIGHT . ',' . User::THEME_DARK,
             'user.active' => 'nullable|boolean'
         ];
+    }
+
+    public $listeners = ['inputValue'];
+
+    public function inputValue($name, $value)
+    {
+        if ($name == 'add_item') {
+            $this->addItemId = $value;
+        }
+    }
+
+    public function addItem()
+    {
+        $this->emit('inputValidate', 'add_item');
+        $this->validateOnly('addItemAmount', [
+            'addItemId' => 'required|integer|exists:items,id',
+            'addItemAmount' => 'required|integer|min:1'
+        ]);
+
+        $this->user->addItem(GameItem::where('id', $this->addItemId)->first(), $this->addItemAmount);
+        $this->addItemAmount = null;
     }
 
     public function editUser()

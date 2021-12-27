@@ -48,6 +48,17 @@
                     <input class="input" type="text" id="chat-input" placeholder="@lang('play.chat_placeholder')" v-model="chatMessage" @change="sendChat">
                 </div>
             </div>
+
+            <div v-if="user != undefined" class="mx-auto my-3" style="position:absolute;left:0;right:0;width:580px;bottom:0;border-radius:3px;" v-if="connection.connected">
+                <table class="table is-fullwidth">
+                    <tr style="padding: 0 1px;">
+                        <td v-for="x in 10" style="padding: 2px 1px;">
+                            {{-- <div v-if="user.items.find(userItem => userItem.pivot.position_x == x - 1 && userItem.pivot.position_y == 0) != null" class="image is-large" :style="{backgroundImage: ''}"></div> --}}
+                            <div class="image is-large has-background-grey-lighter"></div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
         </div>
     </div>
 

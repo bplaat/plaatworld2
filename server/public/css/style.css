@@ -23,4 +23,5 @@
 @media (min-width: 1024px) {
     html.has-navbar-fixed-top{padding-top:3.5rem}
     .immersive{position:relative;height:calc(100vh - 3.5rem)}
+    .modal-card.is-large{width:75vw}
 }

@@ -17,8 +17,11 @@ class Crud extends PaginationComponent
         'object.height' => 'required|numeric|min:0.001',
         'object.depth' => 'required|numeric|min:0',
         'object.texture_id' => 'nullable|integer|exists:textures,id',
-        'object.texture_repeat_x' => 'integer',
-        'object.texture_repeat_y' => 'integer',
+        'object.texture_repeat_x' => 'required|integer|min:1',
+        'object.texture_repeat_y' => 'required|integer|min:1',
+        'object.item_id' => 'nullable|integer|exists:items,id',
+        'object.item_chance' => 'required|integer|min:1',
+        'object.item_amount' => 'required|integer|min:1',
         'object.active' => 'nullable|boolean'
     ];
 
@@ -41,6 +44,9 @@ class Crud extends PaginationComponent
     {
         if ($name == 'texture') {
             $this->object->texture_id = $value;
+        }
+        if ($name == 'item') {
+            $this->object->item_id = $value;
         }
     }
 
@@ -75,6 +81,6 @@ class Crud extends PaginationComponent
             }
         }
         return view('livewire.admin.objects.crud', ['objects' => $objects])
-        ->layout('layouts.app', ['title' => __('admin/objects.crud.title'), 'threejs' => true, 'objectviewerjs' => true]);
+            ->layout('layouts.app', ['title' => __('admin/objects.crud.title'), 'threejs' => true, 'objectviewerjs' => true]);
     }
 }

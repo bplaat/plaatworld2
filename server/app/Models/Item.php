@@ -16,7 +16,7 @@ class Item extends Model
 
     protected $attributes = [
         'name' => 'Untitled item',
-        'stackability' => 1,
+        'stackability' => 64,
         'active' => true
     ];
 
@@ -28,12 +28,6 @@ class Item extends Model
     public function texture()
     {
         return $this->hasOne(Texture::class, 'id', 'texture_id');
-    }
-
-    // A item belongs to many users
-    public function users()
-    {
-        return $this->belongsToMany(User::class)->withPivot('amount')->withTimestamps();
     }
 
     // Search by a query

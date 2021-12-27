@@ -17,7 +17,9 @@ class CreateUserItemTable extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('item_id');
-            $table->unsignedBigInteger('amount');
+            $table->unsignedInteger('position_x');
+            $table->unsignedInteger('position_y');
+            $table->unsignedInteger('amount');
             $table->timestamps();
 
             $table->foreign('user_id')
@@ -27,8 +29,6 @@ class CreateUserItemTable extends Migration
             $table->foreign('item_id')
                 ->references('id')
                 ->on('items');
-
-            $table->unique(['user_id', 'item_id']);
         });
     }
 
