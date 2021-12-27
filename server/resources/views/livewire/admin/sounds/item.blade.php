@@ -10,6 +10,9 @@
         </div>
 
         <div class="card-footer">
+            @if ($sound->audio != null)
+                <a class="card-footer-item" onclick="new Audio('/storage/sounds/{{ $sound->audio }}').play()">@lang('admin/sounds.item.play')</a>
+            @endif
             <a class="card-footer-item" wire:click.prevent="$set('isEditing', true)">@lang('admin/sounds.item.edit')</a>
             <a class="card-footer-item has-text-danger" wire:click.prevent="$set('isDeleting', true)">@lang('admin/sounds.item.delete')</a>
         </div>

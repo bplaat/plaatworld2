@@ -30,6 +30,8 @@ Route::middleware('admin')->group(function () {
 
     Route::get('/admin/objects/{object}/editor', App\Http\Livewire\Admin\Objects\Editor::class)->name('admin.objects.editor');
 
+    Route::get('/admin/items', App\Http\Livewire\Admin\Items\Crud::class)->name('admin.items.crud');
+
     Route::get('/admin/sounds', App\Http\Livewire\Admin\Sounds\Crud::class)->name('admin.sounds.crud');
 
     Route::get('/admin/taunts', App\Http\Livewire\Admin\Taunts\Crud::class)->name('admin.taunts.crud');

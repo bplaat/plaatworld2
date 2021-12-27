@@ -2,7 +2,7 @@
     <div class="card">
         <div class="card-content content">
             <h4 class="mb-0">
-                {{ $taunt->taunt }}: {{ $taunt->text_en }}
+                {{ $taunt->text_en }} ({{ $taunt->taunt }})
                 @if (!$taunt->active)
                     <span class="tag is-warning is-pulled-right">{{ Str::upper(__('admin/taunts.item.inactive')) }}</span>
                 @endif
@@ -10,6 +10,9 @@
         </div>
 
         <div class="card-footer">
+            @if ($taunt->sound != null && $taunt->sound->audio != null)
+                <a class="card-footer-item" onclick="new Audio('/storage/sounds/{{ $taunt->sound->audio }}').play()">@lang('admin/taunts.item.play')</a>
+            @endif
             <a class="card-footer-item" wire:click.prevent="$set('isEditing', true)">@lang('admin/taunts.item.edit')</a>
             <a class="card-footer-item has-text-danger" wire:click.prevent="$set('isDeleting', true)">@lang('admin/taunts.item.delete')</a>
         </div>

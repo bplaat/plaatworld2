@@ -19,6 +19,7 @@ return [
 
     // Admin taunts item livewire component
     'item.inactive' => 'Inactive',
+    'item.play' => 'Play',
     'item.edit' => 'Edit',
     'item.delete' => 'Delete',
     'item.edit_taunt' => 'Edit taunt',

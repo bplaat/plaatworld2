@@ -64,7 +64,7 @@ class Crud extends PaginationComponent
         }
 
         return view('livewire.admin.taunts.crud', [
-            'taunts' => $taunts->paginate(4 * config('pagination.web'))->withQueryString()
+            'taunts' => $taunts->paginate(3 * config('pagination.web'))->withQueryString()
         ])->layout('layouts.app', ['title' => __('admin/taunts.crud.title')]);
     }
 }

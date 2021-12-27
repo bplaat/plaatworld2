@@ -8,6 +8,7 @@ return [
     'worlds' => 'Worlds',
     'textures' => 'Textures',
     'objects' => 'Objects',
+    'items' => 'Items',
     'sounds' => 'Sounds',
     'taunts' => 'Taunts'
 ];

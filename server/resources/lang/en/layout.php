@@ -8,6 +8,7 @@ return [
     'navbar.admin_worlds' => 'Worlds',
     'navbar.admin_textures' => 'Textures',
     'navbar.admin_objects' => 'Objects',
+    'navbar.admin_items' => 'Items',
     'navbar.admin_sounds' => 'Sounds',
     'navbar.admin_taunts' => 'Taunts',
     'navbar.settings' => 'Settings',

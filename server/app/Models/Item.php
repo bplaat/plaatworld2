@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Taunt extends Model
+class Item extends Model
 {
     use SoftDeletes;
 
@@ -15,8 +15,8 @@ class Taunt extends Model
     ];
 
     protected $attributes = [
-        'taunt' => '?',
-        'text_en' => 'Unkown taunt',
+        'name' => 'Untitled item',
+        'stackability' => 1,
         'active' => true
     ];
 
@@ -24,16 +24,22 @@ class Taunt extends Model
         'active' => 'boolean'
     ];
 
-    // A taunt has one sound
-    public function sound()
+    // A item has one texture
+    public function texture()
     {
-        return $this->hasOne(Sound::class, 'id', 'sound_id');
+        return $this->hasOne(Texture::class, 'id', 'texture_id');
+    }
+
+    // A item belongs to many users
+    public function users()
+    {
+        return $this->belongsToMany(User::class)->withPivot('amount')->withTimestamps();
     }
 
     // Search by a query
     public static function search($query, $searchQuery)
     {
-        return $query->where('text_en', 'LIKE', '%' . $searchQuery . '%')
+        return $query->where('name', 'LIKE', '%' . $searchQuery . '%')
             ->orWhere('created_at', 'LIKE', '%' . $searchQuery . '%');
     }
 }

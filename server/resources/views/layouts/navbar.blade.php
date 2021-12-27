@@ -31,6 +31,7 @@
                                 <a @class(['navbar-item', 'is-active' => Route::currentRouteName() == 'admin.worlds.crud']) href="{{ route('admin.worlds.crud') }}">@lang('layout.navbar.admin_worlds')</a>
                                 <a @class(['navbar-item', 'is-active' => Route::currentRouteName() == 'admin.textures.crud']) href="{{ route('admin.textures.crud') }}">@lang('layout.navbar.admin_textures')</a>
                                 <a @class(['navbar-item', 'is-active' => Route::currentRouteName() == 'admin.objects.crud']) href="{{ route('admin.objects.crud') }}">@lang('layout.navbar.admin_objects')</a>
+                                <a @class(['navbar-item', 'is-active' => Route::currentRouteName() == 'admin.items.crud']) href="{{ route('admin.items.crud') }}">@lang('layout.navbar.admin_items')</a>
                                 <a @class(['navbar-item', 'is-active' => Route::currentRouteName() == 'admin.sounds.crud']) href="{{ route('admin.sounds.crud') }}">@lang('layout.navbar.admin_sounds')</a>
                                 <a @class(['navbar-item', 'is-active' => Route::currentRouteName() == 'admin.taunts.crud']) href="{{ route('admin.taunts.crud') }}">@lang('layout.navbar.admin_taunts')</a>
                             </div>

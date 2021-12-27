@@ -45,6 +45,12 @@ class User extends Authenticatable
         'active' => 'boolean'
     ];
 
+    // A user belongs to many items
+    public function items()
+    {
+        return $this->belongsToMany(Item::class)->withPivot('amount')->withTimestamps();
+    }
+
     // Generate a random avatar name
     public static function generateAvatarName($extension)
     {
